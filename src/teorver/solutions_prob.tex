@@ -1,0 +1,114 @@
+
+\documentclass[12pt]{article}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\C}[2]{\binom{#1}{#2}}
+\begin{document}
+
+\begin{center}
+{\LARGE Оформленные решения по теории вероятностей}\\[4pt]
+{\small (карточная задача; байесовская задача; условная вероятность)}
+\end{center}
+
+\section*{Задача 1. Пять карт из колоды 52: ровно 3 красные, ровно 1~червa, не больше 2 тузов}
+
+\textbf{Шаг 1. Без ограничения по тузам.}
+Требование ``ровно 3 красные'' и ``ровно 1 черва'' означает композицию мастей:
+$1$ черва, $2$ бубны, $2$ чёрные. Число пятёрок карт без учёта тузов:
+\[N_0=\C{13}{1}\C{13}{2}\C{26}{2}=329\,550.\]
+
+\textbf{Шаг 2. Вычтем ``плохие'' случаи с $\ge 3$ тузами.}
+
+\emph{(i) Ровно 4 туза.} Тогда пятая карта должна быть бубновой, не тузом: $12$ вариантов.
+\[
+N_{4\text{A}}=12.
+\]
+
+\emph{(ii) Ровно 3 туза.} Разбиваем по отсутствующему тузу.
+\begin{itemize}
+\item Нет $A\diamondsuit$: есть $A\heartsuit,A\clubsuit,A\spadesuit$; нужно добавить $2$ бубны не тузы: $\C{12}{2}=66$.
+\item Нет $A\heartsuit$: есть $A\diamondsuit,A\clubsuit,A\spadesuit$; нужно добавить по одной нетузовой черве и бубне: $12\cdot 12=144$.
+\item Нет $A\clubsuit$: есть $A\heartsuit,A\diamondsuit,A\spadesuit$; нужно добавить одну нетузовую бубну и одну нетузовую чёрную (клуб/пика): $12\cdot 24=288$.
+\item Нет $A\spadesuit$: симметрично предыдущему: $12\cdot 24=288$.
+\end{itemize}
+Итого для $3$ тузов: $66+144+288+288=786$.
+
+\smallskip
+Суммарно ``плохих'' с $3$ или $4$ тузами: 
+\[
+N_{\ge3\text{A}}=786+12=798.
+\]
+
+\textbf{Шаг 3. Ответ.} Благоприятных пятёрок 
+\[
+N = N_0-N_{\ge3\text{A}}=329\,550-798=328\,752.
+\]
+Вероятность
+\[
+\PP=\frac{N}{\C{52}{5}}=\frac{328\,752}{2\,598\,960}
+=\frac{6\,849}{54\,145}\approx 0.12649\;\;(\approx 12.649\%).
+\]
+
+\section*{Задача 2. Байесовский расчёт для положительного теста}
+Пусть болезнь встречается с вероятностью $p=0.01$. Считаем, что вероятность ошибки у теста одинакова
+для обоих типов ошибок: $e=0.025$, то есть чувствительность и специфичность равны $1-e=0.975$.
+
+\subsection*{a)} Вероятность быть действительно больным при положительном результате:
+\begin{align*}
+\PP(\text{болен}\mid +)
+&=\frac{(1-e)\,p}{(1-e)\,p+e\,(1-p)}
+=\frac{0.975\cdot 0.01}{0.975\cdot 0.01+0.025\cdot 0.99}\\
+&=\frac{0.00975}{0.00975+0.02475}
+=\frac{13}{46}\approx 0.2826.
+\end{align*}
+
+\subsection*{б)} Требуемая ошибка $e$ для достижения 
+$\PP(\text{болен}\mid +)\ge 0.75$:
+\begin{align*}
+\frac{(1-e)p}{(1-e)p+e(1-p)}&\ge 0.75
+\;\Longleftrightarrow\;
+(1-e)p\ge 0.75\big[(1-e)p+e(1-p)\big]\\
+&\Longleftrightarrow\;
+e\le \frac{p}{p+3(1-p)}.
+\end{align*}
+При $p=0.01$:
+\(
+e\le \dfrac{0.01}{0.01+3\cdot 0.99}\approx 0.003356.
+\)
+То есть ошибка теста должна быть не более $\approx 0.336\%$.
+
+\medskip
+\textit{Замечание.} Если чувствительность и специфичность различаются, 
+в формуле нужно подставить отдельно $\text{Se}$ и $1-\text{Sp}$.
+
+\section*{Задача 3. Условная вероятность с независимыми событиями}
+Даны независимые $A,B$, $\PP(A)=0.6$, $\PP(A\cap B)=0.3$.
+Найти $\PP\!\big(\overline{A\setminus B}\,\big|\,A\cup B\big)$.
+
+Заметим:
+\(
+A\setminus B=A\cap \overline B,\ 
+\overline{A\setminus B}=\overline{A\cap \overline B}= \overline A\cup B.
+\)
+Тогда
+\begin{align*}
+\PP\big(\overline{A\setminus B}\mid A\cup B\big)
+&=\frac{\PP\big((\overline A\cup B)\cap (A\cup B)\big)}{\PP(A\cup B)}
+=\frac{\PP(B)}{\PP(A\cup B)}.
+\end{align*}
+По независимости $\PP(B)=\dfrac{\PP(A\cap B)}{\PP(A)}=\dfrac{0.3}{0.6}=0.5$, а
+\(
+\PP(A\cup B)=\PP(A)+\PP(B)-\PP(A\cap B)=0.6+0.5-0.3=0.8.
+\)
+Следовательно,
+\(
+\PP=0.5/0.8=\dfrac{5}{8}=0.625.
+\)
+
+\end{document}

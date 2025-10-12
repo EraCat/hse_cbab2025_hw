@@ -1,0 +1,69 @@
+
+% Preamble
+\documentclass[11pt]{article}
+
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{amstext}
+
+\newcommand{\PP}{\mathbb{P}}
+
+% Document
+\begin{document}
+    \begin{center}
+    {\LARGE Домашнее задание №1}
+        \\[4pt]
+        {\small (Арапов А.А. ВБИБ 2025)}
+    \end{center}
+
+
+    \section*{Задача 1}\label{sec:-1}
+
+    \textbf{Шаг 1. Найдем сколько 5ок с любым количеством тузов}
+
+    Ровно 3 красные и ровно 1 черва, т.е. 1 черва, 2 бубны, 2 чёрные.
+    Таких комбинаций:
+    \[N_0=\binom{13}{1}\binom{13}{2}\binom{26}{2}=329\,550.\]
+
+    \textbf{Шаг 2. Вычтем случаи с $\ge 3$ тузами.}
+
+    \emph{(1) Ровно 4 туза.} Тогда пятая карта должна быть бубновой, не тузом: $12$ вариантов.
+    \[
+        N_1 = \binom{12}{2}
+    \]
+
+    \emph{(2) Ровно 3 туза.}
+    \begin{itemize}
+        \item Нет $A\diamondsuit$: есть $A\heartsuit,A\clubsuit,A\spadesuit$; нужно добавить $2$ бубны без тузов: $\binom{12}{2}=66$.
+        \item Нет $A\heartsuit$: есть $A\diamondsuit,A\clubsuit,A\spadesuit$; т.е. бубна без туза и черви без туза: $\binom{12}{1}\cdot\binom{12}{1}=144$.
+        \item Нет $A\clubsuit$: есть $A\heartsuit,A\diamondsuit,A\spadesuit$; бубна без туза и черная без туза: $\binom{12}{1}\cdot\binom{24}{1}=288$.
+        \item Нет $A\spadesuit$: симметрично предыдущему: $\binom{12}{1}\cdot\binom{24}{1}=288$.
+    \end{itemize}
+    Итого для 3 тузов: $ N_2 = 66+144+288+288=786$.
+
+    \smallskip
+    Суммарно с 3 или 4 тузами:
+    \[
+        N_3=786+12=798.
+    \]
+
+    \textbf{Ответ.} Благоприятных пятёрок
+    \[
+        N = N_0-N_3=329\,550-798=328\,752.
+    \]
+    Вероятность
+    \[
+        \PP=\frac{N}{\binom{52}{5}}=\frac{328\,752}{2\,598\,960}
+        =\frac{6\,849}{54\,145}\approx 0.12649\;\;(\approx 12.649\%).
+    \]
+
+
+    \section*{Задача 2}\label{sec:0}
+\end{document}
