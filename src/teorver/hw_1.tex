@@ -1,7 +1,4 @@
-
-% Preamble
-\documentclass[11pt]{article}
-
+\documentclass[12pt]{article}
 
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -15,55 +12,334 @@
 
 \newcommand{\PP}{\mathbb{P}}
 
-% Document
+
+\title{Домашняя работа №1}
+\author{Арапов А.А.}
+\date{}
+
 \begin{document}
-    \begin{center}
-    {\LARGE Домашнее задание №1}
-        \\[4pt]
-        {\small (Арапов А.А. ВБИБ 2025)}
-    \end{center}
+    \maketitle
 
 
-    \section*{Задача 1}\label{sec:-1}
-
-    \textbf{Шаг 1. Найдем сколько 5ок с любым количеством тузов}
-
-    Ровно 3 красные и ровно 1 черва, т.е. 1 черва, 2 бубны, 2 чёрные.
-    Таких комбинаций:
-    \[N_0=\binom{13}{1}\binom{13}{2}\binom{26}{2}=329\,550.\]
-
-    \textbf{Шаг 2. Вычтем случаи с $\ge 3$ тузами.}
-
-    \emph{(1) Ровно 4 туза.} Тогда пятая карта должна быть бубновой, не тузом: $12$ вариантов.
+    \section*{Задача 1}
+    Композиция мастей должна быть: $1$ черва, $2$ бубны, $2$ чёрные.
+    Без ограничений по тузам
     \[
-        N_1 = \binom{12}{2}
+        N_0=\binom{13}{1}\binom{13}{2}\binom{26}{2}=329\,550.
     \]
+    Вычтем случаи с $\ge3$ тузами.
 
-    \emph{(2) Ровно 3 туза.}
+    \textbf{4 туза:} пятая карта --- бубна, не туз: $N_4=12$.
+
+    \textbf{3 туза:}
     \begin{itemize}
-        \item Нет $A\diamondsuit$: есть $A\heartsuit,A\clubsuit,A\spadesuit$; нужно добавить $2$ бубны без тузов: $\binom{12}{2}=66$.
-        \item Нет $A\heartsuit$: есть $A\diamondsuit,A\clubsuit,A\spadesuit$; т.е. бубна без туза и черви без туза: $\binom{12}{1}\cdot\binom{12}{1}=144$.
-        \item Нет $A\clubsuit$: есть $A\heartsuit,A\diamondsuit,A\spadesuit$; бубна без туза и черная без туза: $\binom{12}{1}\cdot\binom{24}{1}=288$.
-        \item Нет $A\spadesuit$: симметрично предыдущему: $\binom{12}{1}\cdot\binom{24}{1}=288$.
+        \item без $A\diamondsuit$: $\binom{12}{2}=66$;
+        \item без $A\heartsuit$: надо выбрать бубну и черви не тузы: $12\cdot12=144$;
+        \item без $A\clubsuit$: надо выбрать бубну и черную без тузов: $12\cdot24=288$;
+        \item без $A\spadesuit$: симметрично: $12\cdot24=288$.
     \end{itemize}
-    Итого для 3 тузов: $ N_2 = 66+144+288+288=786$.
+    Итого для $3$ тузов $786$, а для $3$ или $4$ тузов $N_3+N_4=786+12=798$.
 
-    \smallskip
-    Суммарно с 3 или 4 тузами:
+    Благоприятных пятёрок
     \[
-        N_3=786+12=798.
+        N=N_0-N_{\ge3}=328\,752.
     \]
-
-    \textbf{Ответ.} Благоприятных пятёрок
-    \[
-        N = N_0-N_3=329\,550-798=328\,752.
-    \]
+    \textbf{Ответ.}
     Вероятность
     \[
-        \PP=\frac{N}{\binom{52}{5}}=\frac{328\,752}{2\,598\,960}
-        =\frac{6\,849}{54\,145}\approx 0.12649\;\;(\approx 12.649\%).
+        \PP=\frac{N}{\binom{52}{5}}=\frac{328\,752}{2\,598\,960}=\frac{6\,849}{54\,145}\approx 0.12649.
     \]
 
 
-    \section*{Задача 2}\label{sec:0}
+    \section*{Задача 2}
+    Пусть $A$ - событие, что человек болен $\PP(A)=0.01$
+    $p=0.975$ - вероятность успешного теста. $q=1-p=0.025$ - вероятность ошибки
+    Полная вероятность, что тест положительный
+    \[
+        \PP(+)=p\cdot\PP(\text{A})+q\cdot\PP(\bar{A})
+    \]
+
+    \subsection*{a)}
+    \begin{align*}
+        \PP(\text{A}\mid +)
+        &=\frac{p\cdot\PP(A)}{\PP(+)}
+        =\frac{0.975\cdot0.01}{0.975\cdot0.01+0.025\cdot0.99}
+        =\frac{13}{46}\approx0.2826.
+    \end{align*}
+
+    \subsection*{б)}
+    Требуемое $q$ из условия $\displaystyle \frac{(1-q)\PP(A)}{(1-q)\PP(A)+q(1-\PP(A))}\ge 0.75$:
+    \[
+        q\le \frac{\PP(A)}{\PP(A)+3(1-\PP(A))}.
+    \]
+    При $\PP(A)=0.01$: $q\lesssim 0.003356$ (то есть ошибка не более $0.336\%$).
+
+
+    \section*{Задача 3}
+    Даны независимые $A,B$, $\PP(A)=0.6$, $\PP(A\cap B)=0.3$
+    \[
+        \PP(B)=\frac{\PP(A\cap B)}{\PP(A)}=\frac{0.3}{0.6}=0.5
+    \]
+    Преобразуем $\overline{A\setminus B}$
+    \[
+        \overline{A\setminus B}=\overline{\overline{A}\cap B}=\overline{A}\cup B
+    \]
+
+    \begin{align*}
+        \PP\!\big(\overline{A\setminus B}\mid A\cup B\big)
+        &=\frac{\PP\big((\overline A\cup B)\cap(A\cup B)\big)}{\PP(A\cup B)}
+        =\frac{\PP(B)}{\PP(A\cup B)}\\
+        &=\frac{0.3/0.6}{\,0.6+0.5-0.3\,}=\frac{1/2}{4/5}=\frac{5}{8}=0.625.
+    \end{align*}
+
+
+    \section*{Задача 4}
+    $a,b$ - точки на отрезке $[0,5]$, $\Omega = [0,5]^2$, $a\cdot b> 1$
+
+    \[
+        \PP(a + b)<6 = ?
+    \]
+
+    Рассчитаем площадь над графиком $a=1/b$
+    \[
+        S_1(ab>1)=\int_{1/5}^{5}\!\Big(5-\frac1x\Big)\,dx=24-2\ln5,
+    \]
+        {Рассчитаем площадь над графиком $a+b=6$. Это прямоугольный треугольник с катетами $4$}
+    \[
+        S_2(a+b>6) =0.5 * 4*4 = 8
+    \]
+    Нужная площадь рассчитывается $S_1 - S_2 = 24-2\ln5 - 8 = 16 - 2\ln5$.
+
+    Отсюда
+    \[
+        \PP=\frac{16-2\ln5}{24-2\ln5}=\frac{8-\ln5}{12-\ln5}\approx 0.6153.
+    \]
+
+
+    \section*{Задача 5}
+    $\Omega=\{1,\dots,6\}^2$ (36 равновероятных исходов)
+    \begin{align*}
+        &A_1=\{X_1\equiv0\!\!\!\pmod2,\ X_2\equiv0\!\!\!\pmod3\},\qquad
+        A_2=\{X_1\equiv0\!\!\!\pmod3,\ X_2\equiv0\!\!\!\pmod2\},\\
+        &A_3=\{X_2\mid X_1\},\quad A_4=\{X_1\mid X_2\},\quad
+        A_5=\{X_1+X_2\equiv0\!\!\!\pmod2\},\quad
+        A_6=\{X_1+X_2\equiv0\!\!\!\pmod3\}.
+    \end{align*}
+    Вероятности:
+    \[
+        \PP(A_1)=\PP(A_2)=\tfrac16,\quad \PP(A_3)=\PP(A_4)=\tfrac{7}{18},\quad
+        \PP(A_5)=\tfrac12,\quad \PP(A_6)=\tfrac13.
+    \]
+    Пересечения:
+    \begin{align*}
+        &\PP(A_1\cap A_2)=\tfrac{1}{36},\quad
+        \PP(A_1\cap A_5)=\PP(A_2\cap A_5)=\tfrac{1}{12},\\
+        &\PP(A_1\cap A_6)=\PP(A_2\cap A_6)=\tfrac{1}{18},\quad
+        \PP(A_5\cap A_6)=\tfrac{1}{6},\\
+        &\PP(A_3\cap A_4)=\tfrac{1}{6},\quad
+        \PP(A_3\cap A_5)=\PP(A_4\cap A_5)=\tfrac{5}{18},\\
+        &\PP(A_3\cap A_6)=\PP(A_4\cap A_6)=\tfrac{1}{6},\\
+        &\PP(A_1\cap A_3)=\PP(A_1\cap A_4)=\PP(A_2\cap A_3)=\PP(A_2\cap A_4)=\tfrac{1}{18}.
+    \end{align*}
+    \textbf{Независимые пары(значит вероятность пересечений равна происзведению вероятностей):}
+    \(
+    (A_1,A_2),\ (A_1,A_5),\ (A_2,A_5),\ (A_1,A_6),\ (A_2,A_6),\ (A_5,A_6).
+    \)
+    Остальные пары — зависимы.
+
+    \textbf{Независимость в совокупности (тройки):}
+    \(
+    \{A_1,A_5,A_6\}\ \text{и}\ \{A_2,A_5,A_6\}
+    \)
+    независимы, т.к.
+    \[
+        \PP(A_1\cap A_5\cap A_6)=\tfrac{1}{36}=\tfrac16\cdot\tfrac12\cdot\tfrac13,
+        \quad
+        \PP(A_2\cap A_5\cap A_6)=\tfrac{1}{36}.
+    \]
+    Наборов из четырёх и более, независимых в совокупности, нет (уже
+    $\PP(A_1\cap A_2\cap A_5)\ne \PP(A_1)\PP(A_2)\PP(A_5)$).
+
+
+    \section*{Задача 6(a)}
+    Пусть $\Omega=[-1,1]$ и
+    \[
+        \xi(\alpha)=\max\!\Bigl(\tfrac{1}{3},\,\bigl|\alpha-\tfrac{1}{2}\bigr|\Bigr).
+    \]
+    Опишем \emph{минимальные множества} (классы точек, имеющих одинаковое значение $\xi$), а затем зададим
+    $\sigma(\xi)$ как все их объединения.
+
+    \paragraph{Случай 1 (константа).}
+    Если $\alpha\in\bigl[\tfrac{1}{6},\,\tfrac{5}{6}\bigr]$, то $\xi(\alpha)\equiv \tfrac{1}{3}$.
+    Минимальное множество здесь одно --- весь отрезок
+    \[
+        M:=\Bigl[\tfrac{1}{6},\,\tfrac{5}{6}\Bigr].
+    \]
+
+    \paragraph{Случай 2 (одно решение).}
+    Если $\alpha\in(-1,0)$, то $\xi(\alpha)=\tfrac{1}{2}-\alpha\in(\tfrac{1}{2},\tfrac{3}{2}]$ и значение $\xi(\alpha)$ достигается
+    ровно в одной точке $\alpha$ (вторая ветвь $\tfrac{1}{2}+\xi(\alpha)>1$ вне $\Omega$).
+    Минимальное множество:
+    \[
+        \{\alpha\},\qquad \alpha\in(-1,0).
+    \]
+    (Граница $\alpha=0$ не входит сюда, см. Случай~3.)
+
+    \paragraph{Случай 3 (две обратные ветви).}
+    Если $\alpha\in(0,1]\setminus\bigl[\tfrac{1}{6},\tfrac{5}{6}\bigr]$, то уравнение
+    $\bigl|\beta-\tfrac{1}{2}\bigr|=\bigl|\alpha-\tfrac{1}{2}\bigr|$ имеет две решения в $\Omega$:
+    $\beta=\alpha$ и $\beta=1-\alpha$. Соответственно
+    \[
+        \{\alpha,\,1-\alpha\},\qquad \alpha\in(0,\tfrac{1}{6})\ \text{или}\ \alpha\in(\tfrac{5}{6},1].
+    \]
+    Частный случай: при $\alpha=0$ имеем $\xi(0)=\tfrac{1}{2}$ и минимальное множество $\{0,1\}$.
+
+    \medskip
+    \noindent\textbf{Итог.} $\sigma(\xi)$ состоит из всех объединений следующих минимальных множеств:
+    \begin{itemize}
+        \item либо берём/не берём $M=[\tfrac{1}{6},\tfrac{5}{6}]$;
+        \item любые одноточечные $\{\alpha\}$ с $\alpha\in(-1,0)$;
+        \item любые пары $\{\alpha,\,1-\alpha\}$ с $\alpha\in[0,\tfrac{1}{6})$
+        \ (\textit{замечание:} правая точка $1-\alpha\in(\tfrac{5}{6},1]$).
+    \end{itemize}
+    Формально:
+    \[
+        \sigma(\xi)=\Bigl\{\, M_0\ \cup\ \Bigl(\bigcup_{\alpha\in A}\{\alpha\}\Bigr)\ \cup\
+        \Bigl(\bigcup_{\alpha\in B}\{\alpha,1-\alpha\}\Bigr)\ :\ M_0\in\{\varnothing,M\},\ A\subset(-1,0),\ B\subset[0,\tfrac{1}{6})\ \Bigr\}.
+    \]
+
+
+    \section*{6(b)}
+    Пусть $\Omega=[-1,\tfrac{3}{2}]$ и
+    \[
+        \xi(\alpha)=\max\!\Bigl(0,\ \bigl|\alpha-\tfrac{1}{2}\bigr|-\tfrac{1}{4}\Bigr).
+    \]
+    Эквивалентная покомпонентная запись:
+    \[
+        \xi(\alpha)=
+        \begin{cases}
+            \ \tfrac{1}{4}-\alpha, & \alpha\le \tfrac{1}{4},\\[2mm]
+            \ 0, & \alpha\in\bigl[\tfrac{1}{4},\tfrac{3}{4}\bigr],\\[2mm]
+            \ \alpha-\tfrac{3}{4}, & \alpha\ge \tfrac{3}{4},
+        \end{cases}
+        \qquad \alpha\in[-1,\tfrac{3}{2}].
+    \]
+
+    \paragraph{Случай 1 (константа).}
+    Если $\alpha\in\bigl[\tfrac{1}{4},\tfrac{3}{4}\bigr]$, то $\xi(\alpha)\equiv 0$.
+    Минимальное множество здесь одно — весь отрезок
+    \[
+        M:=\Bigl[\tfrac{1}{4},\,\tfrac{3}{4}\Bigr].
+    \]
+
+    \paragraph{Случай 2 (одно решение).}
+    Если $\alpha\in[-1,-\tfrac{1}{2})$, то
+    \(
+    \xi(\alpha)=\tfrac{1}{4}-\alpha\in(\tfrac{3}{4},\tfrac{5}{4}],
+    \)
+    и это значение достигается ровно в одной точке \(\alpha\)
+    (вторая ветвь \(\tfrac{3}{4}+\xi(\alpha)> \tfrac{3}{2}\) вне \(\Omega\)).
+    Минимальное множество:
+    \[
+        \{\alpha\},\qquad \alpha\in[-1,-\tfrac{1}{2}).
+    \]
+
+    \paragraph{Случай 3 (две обратные ветви).}
+    Для значений \(\xi\in[0,\tfrac{3}{4}]\) уравнение
+    \(\bigl|\beta-\tfrac{1}{2}\bigr|-\tfrac{1}{4}=\xi(\alpha)\)
+    имеет два решения в \(\Omega\), симметричные относительно точки \(1/2\).
+    Эквивалентно: для
+    \[
+        \alpha\in\Bigl[-\tfrac{1}{2},\tfrac{1}{4}\Bigr)\ \ \text{или}\ \
+        \alpha\in\Bigl(\tfrac{3}{4},\tfrac{3}{2}\Bigr]
+    \]
+    минимальным множеством является
+    \[
+        \{\alpha,\,1-\alpha\}.
+    \]
+    (В частности, при \(\alpha=-\tfrac{1}{2}\) получаем пару \(\{-\tfrac{1}{2},\,\tfrac{3}{2}\}\);
+    при \(\alpha=0\) — \(\{0,1\}\). Точка \(\alpha=\tfrac{1}{4}\) относится к случаю 1.)
+
+    \medskip
+    \noindent\textbf{Ответ.} \(\sigma(\xi)\) состоит из всех объединений следующих минимальных множеств:
+    \begin{itemize}
+        \item либо берём/не берём \(M=[\tfrac{1}{4},\tfrac{3}{4}]\);
+        \item любые одноточечные \(\{\alpha\}\) с \(\alpha\in[-1,-\tfrac{1}{2})\);
+        \item любые пары \(\{\alpha,\,1-\alpha\}\) с \(\alpha\in\bigl[-\tfrac{1}{2},\tfrac{1}{4}\bigr)\)
+        \ (что автоматически покрывает и симметричные точки \((\tfrac{3}{4},\tfrac{3}{2}]\)).
+    \end{itemize}
+    Формально:
+    \[
+        \sigma(\xi)=\Bigl\{\,
+        M_0\ \cup\ \Bigl(\bigcup_{\alpha\in A}\{\alpha\}\Bigr)\ \cup\
+        \Bigl(\bigcup_{\alpha\in B}\{\alpha,1-\alpha\}\Bigr)\ :
+        \ M_0\in\{\varnothing,M\},\ A\subset[-1,-\tfrac{1}{2}),\ B\subset\bigl[-\tfrac{1}{2},\tfrac{1}{4}\bigr)
+        \ \Bigr\}.
+    \]
+
+
+    \section*{6(c)}
+    Пусть $\Omega=[-1,3]$ и
+    \[
+        \xi(\alpha)=\max\bigl(\underbrace{\alpha-1}_{=:f(\alpha)},\ \underbrace{\alpha^2-3\alpha+2}_{=:g(\alpha)}\bigr)
+        =\max\bigl(\alpha-1,\ (\alpha-1)(\alpha-2)\bigr).
+    \]
+
+    \paragraph{Сравнение ветвей и обратные функции.}
+    Разность $f-g=(\alpha-1)(3-\alpha)$, поэтому
+    \[
+        \begin{cases}
+            \xi(\alpha)=g(\alpha), & \alpha\in[-1,1],\\
+            \xi(\alpha)=f(\alpha), & \alpha\in[1,3],
+        \end{cases}
+        \qquad\text{и}\quad \xi(1)=0,\ \xi(3)=2.
+    \]
+    На $[-1,1]$ функция $g$ строго убывает
+    а на $[1,3]$ функция $f$ строго возрастает
+
+    Обратные по уровням (для $y\in[0,6]$):
+    \[
+        g^{-1}(y)=\frac{3-\sqrt{\,1+4y\,}}{2}\in[-1,1],\qquad
+        f^{-1}(y)=1+y\in[1,3]\ \ (y\in[0,2]).
+    \]
+
+    \paragraph{Случай 1 (одно решение).}
+    Для уровней $y\in(2,6]$ существует единственное решение в $\Omega$:
+    \[
+        F_y=\xi^{-1}(\{y\})=\Bigl\{\,g^{-1}(y)\Bigr\}=\left\{\frac{3-\sqrt{\,1+4y\,}}{2}\right\}.
+    \]
+    Эквивалентно: все точки $\alpha\in[-1,0)$ образуют минимальные множества-одиночки $\{\alpha\}$.
+
+    \paragraph{Случай 2 (два решения).}
+    Для уровней $y\in(0,2)$ имеем два решения:
+    \[
+        F_y=\Bigl\{\,g^{-1}(y),\ f^{-1}(y)\Bigr\}
+        =\left\{\frac{3-\sqrt{\,1+4y\,}}{2},\ 1+y\right\}.
+    \]
+    Эквивалентно, если положить $t=g^{-1}(y)\in(0,1)$, то $y=g(t)$ и
+    \[
+        F_y=\{\,t,\ 1+g(t)\,\}=\{\,t,\ t^2-3t+3\,\},\qquad t\in(0,1).
+    \]
+    Граничные уровни: при $y=2$ получаем $F_2=\{0,3\}$, при $y=0$ — $F_0=\{1\}$.
+
+    \medskip
+    \noindent\textbf{Ответ}
+    $\sigma(\xi)$ состоит из всех объединений минимальных множеств вида
+    \[
+        \{\alpha\},\ \alpha\in[-1,0)\,;\qquad
+        \{0,3\}\,;\qquad
+        \{1\}\,;\qquad
+        \{\,t,\ t^2-3t+3\,\},\ t\in(0,1).
+    \]
+    Формально:
+    \[
+        \sigma(\xi)=\Bigl\{\
+        \Bigl(\!\bigcup_{\alpha\in A}\{\alpha\}\Bigr)\ \cup\ C_2\ \cup\ C_0\ \cup\
+        \Bigl(\!\bigcup_{t\in B}\{t,\ t^2-3t+3\}\Bigr)\ :
+
+        A\subset[-1,0),\ B\subset(0,1),\ C_2\in\{\varnothing,\{0,3\}\},\ C_0\in\{\varnothing,\{1\}\}
+        \ \Bigr\}.
+    \]
+
+
 \end{document}
