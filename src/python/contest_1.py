@@ -1,5 +1,4 @@
 # 1
-import math
 
 
 def bits_seqs(n):
@@ -34,7 +33,26 @@ def bits_seqs(n):
 
 # 2
 def invert_digits(n):
-    pass
+    y = n
+    x = 0
+    leading_zero_counter = 0
+    first_zero_digits = True
+
+    while y > 0:
+        if first_zero_digits:
+            if y % 10 == 0:
+                leading_zero_counter+=1
+            else:
+                first_zero_digits = False
+
+        x = x * 10 + y % 10
+        y //= 10
+
+
+    if leading_zero_counter > 0:
+        return x, leading_zero_counter
+
+    return x
 
 
 def ba_dedup(arr):
@@ -84,8 +102,8 @@ def is_prime_number(n) -> bool | None:
         return False
 
     i = 3
-    while i*i <=n:
-        if n%i == 0:
+    while i * i <= n:
+        if n % i == 0:
             return False
         i += 2
 
@@ -105,6 +123,10 @@ def main():
     print(l)
 
     print(is_prime_number(5))
+    print(invert_digits(123456789))
+    print(invert_digits(89976))
+    print(invert_digits(0))
+    print(invert_digits(1020000000))
 
 
 if __name__ == "__main__":
