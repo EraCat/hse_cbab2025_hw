@@ -97,6 +97,10 @@ def varint_decode(byte_arr):
     return result
 
 
+def zigzag_encode(n):
+    pass
+
+
 def ba_dedup(arr):
     if len(arr) <= 1:
         return None
