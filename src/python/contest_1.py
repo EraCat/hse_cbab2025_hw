@@ -71,7 +71,15 @@ def varint_encode(n):
     return result
 
 
-def varint_decode(byte_arr):
+def zigzag_encode(n):
+    n = n*2
+    if n < 0:
+        n = abs(n+1)
+
+    return varint_encode(n)
+
+
+def varint_decode(byte_arr)-> list[int | None]:
     if len(byte_arr) == 0:
         return []
 
@@ -97,8 +105,18 @@ def varint_decode(byte_arr):
     return result
 
 
-def zigzag_encode(n):
-    pass
+def zigzag_decode(byte_arr):
+    decoded = varint_decode(byte_arr)
+
+    for i in range(len(decoded)):
+        if decoded[i] is not None:
+            if decoded[i] % 2 == 0:
+                decoded[i] = decoded[i]//2
+            else:
+                decoded[i] = -(decoded[i]+1)//2
+
+
+    return decoded
 
 
 def ba_dedup(arr):
