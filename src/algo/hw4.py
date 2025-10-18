@@ -51,9 +51,39 @@ def call_swap():
     swap_result(data)
 
 
+def restruct_graph():
+    ev = input().split()
+    vertices_num = int(ev[0])
+    e = int(ev[1])
+    d = {}
+    for i in range(e):
+        split = input().split()
+        a = int(split[0])
+        b = int(split[1])
+        if a > b:
+            edges = d.get(b, set())
+            edges.add(a)
+            d[b] = edges
+        elif a < b:
+            edges = d.get(a, set())
+            edges.add(b)
+            d[a] = edges
+
+    e = 0
+    for v in d.values():
+        e += len(v)
+
+    print(vertices_num, e)
+    for k in d:
+        for vertices_num in d[k]:
+            print(k, vertices_num)
+
+
+
 def main():
     # call_dictionary()
-    call_swap()
+    # call_swap()
+    restruct_graph()
 
 
 if __name__ == '__main__':
