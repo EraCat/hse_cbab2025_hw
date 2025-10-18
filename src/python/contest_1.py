@@ -1,6 +1,4 @@
 # 1
-
-
 def bits_seqs(n):
     if n == 0:
         return 0
@@ -72,14 +70,14 @@ def varint_encode(n):
 
 
 def zigzag_encode(n):
-    n = n*2
+    n = n * 2
     if n < 0:
-        n = abs(n+1)
+        n = abs(n + 1)
 
     return varint_encode(n)
 
 
-def varint_decode(byte_arr)-> list[int | None]:
+def varint_decode(byte_arr) -> list[int | None]:
     if len(byte_arr) == 0:
         return []
 
@@ -111,10 +109,9 @@ def zigzag_decode(byte_arr):
     for i in range(len(decoded)):
         if decoded[i] is not None:
             if decoded[i] % 2 == 0:
-                decoded[i] = decoded[i]//2
+                decoded[i] = decoded[i] // 2
             else:
-                decoded[i] = -(decoded[i]+1)//2
-
+                decoded[i] = -(decoded[i] + 1) // 2
 
     return decoded
 
@@ -174,6 +171,90 @@ def is_prime_number(n) -> bool | None:
     return True
 
 
+def utf8_size_hist(src):
+    count_1 = 0
+    count_2 = 0
+    count_3 = 0
+    count_4 = 0
+
+    index = -1
+    start_index = -1
+    seq_len = 0
+    expected = 0
+    for byte in src:
+        index += 1
+        if expected == 0:
+            if (byte & 0xF8) == 0xF0:
+                expected = 3
+                seq_len = 4
+                start_index = index
+            elif (byte & 0xF0) == 0xE0:
+                expected = 2
+                seq_len = 3
+                start_index = index
+            elif (byte & 0xE0) == 0xC0:
+                expected = 1
+                seq_len = 2
+                start_index = index
+            elif (byte & 0x80) == 0x00:
+                count_1 += 1
+            else:
+                return (count_1, count_2, count_3, count_4), index
+        else:
+            if (byte & 0xC0) == 0x80:
+                expected -= 1
+                if expected == 0:
+                    if seq_len == 4:
+                        count_4 += 1
+                    elif seq_len == 3:
+                        count_3 += 1
+                    elif seq_len == 2:
+                        count_2 += 1
+            else:
+                return (count_1, count_2, count_3, count_4), start_index
+
+    if expected > 0:
+        return (count_1, count_2, count_3, count_4), start_index
+
+    return (count_1, count_2, count_3, count_4), -1
+
+
+def division_steps(a: int, b: int) -> list[str]:
+    a_bin = format(a, 'b')
+    b_bin = format(b, 'b')
+
+    lines = [f"{a_bin}/{b_bin}"]
+
+    result = ""
+    rem = a
+
+    if rem == 0:
+        lines.append("0")
+        return lines
+
+    while True:
+        if rem < b:
+            rem <<= 1
+            if result == "":
+                result = "0."
+            else:
+                result += "0"
+            lines.append(f"*: {format(rem, 'b')}/{b_bin} {result}")
+        else:
+            rem = (rem - b) << 1
+            if result == "":
+                result = "0.1"
+            else:
+                result += "1"
+            lines.append(f"-: {format(rem, 'b')}/{b_bin} {result}")
+
+        if rem == 0:
+            break
+
+    lines.append(result)
+    return lines
+
+
 def main():
     print(is_prime_number(1))
 
@@ -195,6 +276,17 @@ def main():
     print(varint_encode(300))
     print(varint_decode(varint_encode(300)))
     print(varint_decode(varint_encode(127)))
+
+    print(utf8_size_hist([12, 23, 34]))
+    print(utf8_size_hist([12, 23, 34, 128, 00]))
+    print(utf8_size_hist([12, 23, 34, 192, 128, 128]))
+    print(utf8_size_hist(
+        [192, 128, 224, 128, 129, 224, 129, 130, 240, 130, 131, 132, 240, 131, 132, 133, 240, 132, 133, 134, 0, 1, 2,
+         3]))
+
+    steps = division_steps(7, 11)
+    for step in steps:
+        print(step)
 
 
 if __name__ == "__main__":
