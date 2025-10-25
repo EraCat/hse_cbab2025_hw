@@ -1,0 +1,896 @@
+%! Author = alexx
+%! Date = 24.10.2025
+
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,amsthm, mathtools}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+\DeclareMathOperator{\Var}{\mathbb{D}}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pbb}{\mathbb{P}}
+
+\begin{document}
+
+    \section*{Задача 0}
+
+    \subsection*{(a)}
+    Пусть случайная величина $X$ имеет моменты
+    \[
+        \E X = 1,\quad
+        \E X^2 = 2,\quad
+        \E X^3 = 3,\quad
+        \E X^4 = 4.
+    \]
+
+    Проверим совместимость этих условий.
+
+    Рассмотрим случайную величину $Y = X^2$. Из неравенства Коши--Буняковского (а эквивалентно, из того, что $\Var(Y)\ge 0$) следует
+    \[
+        \E Y^2 \ge (\E Y)^2.
+    \]
+    Здесь
+    \[
+        \E Y = \E X^2 = 2,\qquad
+        \E Y^2 = \E X^4 = 4,
+    \]
+    поэтому
+    \[
+        4 = \E X^4 = \E Y^2 \ge (\E Y)^2 = (\E X^2)^2 = 4.
+    \]
+    То есть равенство достигается. Равенство в Коши--Буняковском достигается тогда и только тогда, когда $Y$ п.н. пропорциональна константе, то есть $Y$ (а значит $X^2$) является константой почти наверное. Следовательно,
+    \[
+        X^2 \equiv 2 \quad \text{п.н.}
+    \]
+    Отсюда $X^3 = X\cdot X^2 = 2X$, и
+    \[
+        \E X^3 = \E(2X) = 2\,\E X = 2\cdot 1 = 2.
+    \]
+    Но по условию требуется $\E X^3 = 3$. Противоречие.
+
+    \medskip
+    \noindent
+    \textbf{Вывод:} случайной величины $X$ с заданными моментами не существует.
+
+    \subsection*{(b)}
+    Пусть $X,Y,Z$ --- независимые случайные величины. Рассмотрим $X+Z$ и $Y+Z$.
+
+    Проверим, независимы ли они. Для этого найдём ковариацию:
+    \[
+        \Cov(X+Z,\; Y+Z)
+        = \Cov(X,Y) + \Cov(X,Z) + \Cov(Z,Y) + \Var(Z).
+    \]
+    Так как $X,Y,Z$ попарно независимы, $\Cov(X,Y)=\Cov(X,Z)=\Cov(Y,Z)=0$. Тогда
+    \[
+        \Cov(X+Z,\; Y+Z) = \Var(Z).
+    \]
+    Если $\Var(Z)>0$, то ковариация не равна нулю, значит $X+Z$ и $Y+Z$ не могут быть независимы (независимые случайные величины имеют нулевую ковариацию).
+
+    Единственный случай, когда $\Var(Z)=0$, это вырожденно-константный $Z\equiv c$. Тогда $X+Z = X+c$ и $Y+Z = Y+c$, и они независимы как сдвиги независимых $X$ и $Y$.
+
+    \medskip
+    \noindent
+    \textbf{Вывод:} вообще говоря, $X+Z$ и $Y+Z$ не являются независимыми. Они независимы только в вырожденном случае, когда $Z$ почти наверное константа.
+
+
+    \section*{Задача 1}
+
+    Пусть $X_1,\dots,X_n$ --- независимые одинаково распределённые случайные величины (н.о.р.с.в.). Введём обозначение:
+    \[
+        S_{a,m,k} = \sum_{i=m}^{k} X_i^{\,a}.
+    \]
+
+    Будем использовать следующие моменты одной типичной величины $X$:
+    \begin{gather*}
+        \mu = \E X,\qquad
+        \mu_2 = \E X^2,\qquad
+        \sigma^2 = \Var(X) = \mu_2 - \mu^2,\\
+        \mu_3 = \E X^3,\qquad
+        \mu_4 = \E X^4.\\
+    \end{gather*}
+
+    \subsection*{(a) Коэффициент корреляции между $S_{1,1,k}$ и $S_{1,2,k}$}
+
+    Здесь
+    \[
+        S_{1,1,k} = \sum_{i=1}^k X_i,\qquad
+        S_{1,2,k} = \sum_{i=2}^k X_i.
+    \]
+    Общие слагаемые у них: индексы $i=2,\dots,k$, то есть $(k-1)$ штук.
+
+    Так как все $X_i$ независимы и одинаково распределены,
+    \[
+        \Var(S_{1,1,k}) = k\,\sigma^2,\qquad
+        \Var(S_{1,2,k}) = (k-1)\,\sigma^2.
+    \]
+    Ковариация двух сумм равна сумме ковариаций попарно совпадающих индексов:
+    \[
+        \Cov(S_{1,1,k}, S_{1,2,k})
+        = \sum_{i=2}^{k} \Var(X_i)
+        = (k-1)\,\sigma^2.
+    \]
+    Тогда коэффициент корреляции
+    \[
+        \rho
+        = \frac{\Cov(S_{1,1,k}, S_{1,2,k})}{\sqrt{\Var(S_{1,1,k})\,\Var(S_{1,2,k})}}
+        = \frac{(k-1)\sigma^2}{\sqrt{k\sigma^2 \cdot (k-1)\sigma^2}}
+        = \sqrt{\frac{k-1}{k}}.
+    \]
+
+    \subsection*{(b) Коэффициент корреляции между $S_{1,1,k}$ и $S_{1,j,n}$}
+
+    Пусть $n>k>j>1$.
+    \[
+        S_{1,1,k} = \sum_{i=1}^k X_i,\qquad
+        S_{1,j,n} = \sum_{i=j}^n X_i.
+    \]
+    Общие индексы: $i=j,j+1,\dots,k$, то есть $(k-j+1)$ штук.
+
+    Тогда
+    \[
+        \Cov(S_{1,1,k}, S_{1,j,n})
+        = \sum_{i=j}^{k} \Var(X_i)
+        = (k-j+1)\,\sigma^2,
+    \]
+    \[
+        \Var(S_{1,1,k}) = k\,\sigma^2,\qquad
+        \Var(S_{1,j,n}) = (n-j+1)\,\sigma^2.
+    \]
+    Следовательно,
+    \[
+        \rho
+        = \frac{(k-j+1)\sigma^2}{\sqrt{k\sigma^2 \cdot (n-j+1)\sigma^2}}
+        = \frac{k-j+1}{\sqrt{k\,(n-j+1)}}.
+    \]
+
+    \subsection*{(c)$^\ast$ Коэффициент корреляции между $S_{1,1,k}$ и $S_{2,1,j}$}
+
+    Теперь
+    \[
+        S_{1,1,k} = \sum_{i=1}^k X_i,\qquad
+        S_{2,1,j} = \sum_{i=1}^j X_i^2.
+    \]
+
+    Сначала найдём ковариацию $\Cov(X_i, X_i^2)$:
+    \[
+        \Cov(X_i, X_i^2)
+        = \E[X_i^3] - \E[X_i]\E[X_i^2]
+        = \mu_3 - \mu\,\mu_2.
+    \]
+    Если $i\neq r$, то $X_i$ и $X_r^2$ независимы, значит ковариация равна нулю.
+
+    Пересекающиеся индексы у сумм $S_{1,1,k}$ и $S_{2,1,j}$: $i=1,\dots,\min(k,j)$. Значит
+    \[
+        \Cov(S_{1,1,k}, S_{2,1,j})
+        = \sum_{i=1}^{\min(k,j)} \Cov(X_i, X_i^2)
+        = \min(k,j)\,(\mu_3 - \mu\,\mu_2).
+    \]
+
+    Дисперсии:
+    \[
+        \Var(S_{1,1,k}) = k\,\sigma^2.
+    \]
+    Для $S_{2,1,j}$:
+    \[
+        \Var(S_{2,1,j})
+        = \sum_{i=1}^j \Var(X_i^2)
+        = j \,\Var(X^2)
+        = j\left( \E X^4 - (\E X^2)^2 \right)
+        = j(\mu_4 - \mu_2^2).
+    \]
+
+    Отсюда коэффициент корреляции
+    \[
+        \rho
+        = \frac{\Cov(S_{1,1,k}, S_{2,1,j})}{\sqrt{\Var(S_{1,1,k})\Var(S_{2,1,j})}}
+        = \frac{ \min(k,j)\,(\mu_3 - \mu\,\mu_2)}
+        {\sqrt{ k\sigma^2 \cdot j(\mu_4 - \mu_2^2) }}.
+    \]
+
+
+    \section*{Задача 2}
+
+    Задана совместная плотность $(X,Y)$:
+    \[
+        f_{X,Y}(x,y)=
+        \begin{cases}
+            c\,(x+y), & 0 \le y < x \le 1,\\
+            0, & \text{иначе.}
+        \end{cases}
+    \]
+
+    \subsection*{(a) Найти константу $c$ и функцию распределения $F_{X,Y}(x,y)$}
+
+    \textbf{Шаг 1. Нормировка.}
+    Требуем $\iint f_{X,Y}(x,y)\,dy\,dx = 1$. Интегрируем по области $0\le y < x \le 1$:
+    \[
+        1 = \int_0^1 \int_0^x c(x+y)\,dy\,dx.
+    \]
+    Внутренний интеграл:
+    \[
+        \int_0^x (x+y)\,dy = x^2 + \frac{x^2}{2} = \frac{3}{2}x^2.
+    \]
+    Тогда
+    \[
+        1 = \int_0^1 c \cdot \frac{3}{2}x^2\,dx
+        = c\cdot \frac{3}{2}\cdot \frac{1}{3}
+        = \frac{c}{2}.
+    \]
+    Отсюда $c=2$. Значит
+    \[
+        f_{X,Y}(x,y) =
+        \begin{cases}
+            2(x+y), & 0 \le y < x \le 1,\\
+            0, & \text{иначе.}
+        \end{cases}
+    \]
+
+    \medskip
+
+    \textbf{Шаг 2. Функция распределения.}
+    Определим
+    \[
+        F_{X,Y}(x,y) = \Pbb(X \le x,\; Y \le y).
+    \]
+
+    Общая область ненулевой плотности: $0 \le y' < x' \le 1$.
+
+    Пусть сначала $0 \le x \le 1$, $0 \le y \le 1$.
+
+    \textbf{Случай 1: $0 \le x \le y \le 1$.}
+    Тогда условие $Y \le y$ не является ограничением, так как для всех $x' \le x$ и $y' < x'$ мы имеем $y' \le x' \le x \le y$. Значит
+    \[
+        F(x,y)
+        = \int_{0}^{x} \int_{0}^{x'} 2(x'+y')\,dy'\,dx'.
+    \]
+    Внутренний интеграл:
+    \[
+        \int_0^{x'} 2(x'+y')\,dy' = 2\left[x'y' + \frac{y'^2}{2}\right]_{0}^{x'}
+        = 2\left[x'^2 + \frac{x'^2}{2}\right]
+        = 3x'^2.
+    \]
+    Тогда
+    \[
+        F(x,y)
+        = \int_0^{x} 3x'^2\,dx'
+        = x^3.
+    \]
+
+    \textbf{Случай 2: $0 \le y \le x \le 1$.}
+    Теперь условие $Y \le y$ ``отрезает'' область по горизонтали. Тогда
+    \[
+        F(x,y)
+        = \int_{0}^{y} \int_{0}^{x'} 2(x'+y')\,dy'\,dx'
+        + \int_{y}^{x} \int_{0}^{y} 2(x'+y')\,dy'\,dx'.
+    \]
+    Первый интеграл:
+    \[
+        \int_0^{y} \left[ \int_0^{x'} 2(x'+y')\,dy' \right] dx'
+        = \int_0^{y} 3x'^2\,dx'
+        = y^3.
+    \]
+    Второй интеграл: при фиксированном $x'$ от $y'=0$ до $y$,
+    \[
+        \int_0^{y} 2(x'+y')\,dy'
+        = 2\left[x'y + \frac{y^2}{2}\right]
+        = 2x'y + y^2.
+    \]
+    Тогда
+    \[
+        \int_y^{x} (2x'y + y^2)\,dx'
+        = y \int_y^x 2x'\,dx' + y^2(x-y)
+        = y(x^2 - y^2) + y^2(x-y)
+        = yx^2 + y^2 x - 2y^3.
+    \]
+    Складывая с $y^3$:
+    \[
+        F(x,y)
+        = y^3 + \bigl(yx^2 + y^2 x - 2y^3\bigr)
+        = yx^2 + y^2 x - y^3.
+    \]
+
+    Теперь опишем $F(x,y)$ на всей плоскости.
+
+    \[
+        F_{X,Y}(x,y)
+        =
+        \begin{cases}
+            0, & x \le 0 \ \text{или}\ y \le 0,\\[6pt]
+            x^3, & 0 \le x \le 1,\ x \le y,\\[6pt]
+            yx^2 + y^2 x - y^3,
+            & 0 \le y \le x \le 1,\\[6pt]
+            y + y^2 - y^3, & x \ge 1,\ 0 \le y \le 1,\\[6pt]
+            x^3, & 0 \le x \le 1,\ y \ge 1,\\[6pt]
+            1, & x \ge 1,\ y \ge 1~.
+        \end{cases}
+    \]
+
+    Здесь формулы для случаев $x \ge 1$ или $y \ge 1$
+    получены из монотонности $F$ и того, что область плотности ограничена $x \le 1$, $y \le 1$.
+
+    \subsection*{(b) Коэффициент корреляции $\Corr(X,Y)$}
+
+    Сначала найдём все необходимые моменты.
+
+    \textbf{Матожидания.}
+    \[
+        \E X
+        = \int_0^1 \int_0^x x \cdot 2(x+y)\,dy\,dx
+        = 2 \int_0^1 x \left[\int_0^x (x+y)\,dy\right] dx
+        = 2 \int_0^1 x \cdot \frac{3}{2}x^2 dx
+        = 3 \int_0^1 x^3 dx
+        = 3 \cdot \frac{1}{4}
+        = \frac{3}{4}.
+    \]
+
+    \[
+        \E Y
+        = \int_0^1 \int_0^x y \cdot 2(x+y)\,dy\,dx.
+    \]
+    Внутренний интеграл:
+    \[
+        \int_0^x y \cdot 2(x+y)\,dy
+        = \int_0^x (2xy + 2y^2)\,dy
+        = \left[x y^2 + \frac{2}{3}y^3\right]_0^x
+        = x^3 + \frac{2}{3}x^3
+        = \frac{5}{3}x^3.
+    \]
+    Значит
+    \[
+        \E Y
+        = \int_0^1 \frac{5}{3}x^3\,dx
+        = \frac{5}{3} \cdot \frac{1}{4}
+        = \frac{5}{12}.
+    \]
+
+    \textbf{Квадраты.}
+    \[
+        \E X^2
+        = \int_0^1 \int_0^x x^2 \cdot 2(x+y)\,dy\,dx
+        = 2 \int_0^1 x^2 \left[\int_0^x (x+y)\,dy\right] dx
+        = 2 \int_0^1 x^2 \cdot \frac{3}{2}x^2 dx
+        = 3 \int_0^1 x^4 dx
+        = \frac{3}{5}.
+    \]
+
+    \[
+        \E Y^2
+        = \int_0^1 \int_0^x y^2 \cdot 2(x+y)\,dy\,dx
+        = \int_0^1 \left[ \int_0^x (2x y^2 + 2y^3)\,dy \right] dx.
+    \]
+    Внутренний интеграл:
+    \[
+        \int_0^x (2x y^2 + 2y^3)\,dy
+        = \left[ \frac{2x}{3}y^3 + \frac{1}{2}y^4 \right]_0^x
+        = \frac{2x}{3}x^3 + \frac{1}{2}x^4
+        = \frac{2}{3}x^4 + \frac{1}{2}x^4
+        = \frac{7}{6}x^4.
+    \]
+    И значит
+    \[
+        \E Y^2
+        = \int_0^1 \frac{7}{6}x^4\,dx
+        = \frac{7}{6}\cdot \frac{1}{5}
+        = \frac{7}{30}.
+    \]
+
+    \textbf{Поперечный момент.}
+    \[
+        \E[XY]
+        = \int_0^1 \int_0^x x y \cdot 2(x+y)\,dy\,dx
+        = \int_0^1 \left[ \int_0^x (2x^2 y + 2x y^2)\,dy \right] dx.
+    \]
+    Внутренний интеграл:
+    \[
+        \int_0^x (2x^2 y + 2x y^2)\,dy
+        = \left[x^2 y^2 + \frac{2x}{3}y^3\right]_0^x
+        = x^2 x^2 + \frac{2x}{3} x^3
+        = x^4 + \frac{2}{3}x^4
+        = \frac{5}{3}x^4.
+    \]
+    Тогда
+    \[
+        \E[XY]
+        = \int_0^1 \frac{5}{3}x^4\,dx
+        = \frac{5}{3}\cdot \frac{1}{5}
+        = \frac{1}{3}.
+    \]
+
+    Теперь дисперсии и ковариация:
+    \[
+        \Var(X) = \E X^2 - (\E X)^2
+        = \frac{3}{5} - \left(\frac{3}{4}\right)^2
+        = \frac{3}{5} - \frac{9}{16}
+        = \frac{48}{80} - \frac{45}{80}
+        = \frac{3}{80}.
+    \]
+    \[
+        \Var(Y) = \E Y^2 - (\E Y)^2
+        = \frac{7}{30} - \left(\frac{5}{12}\right)^2
+        = \frac{7}{30} - \frac{25}{144}
+        = \frac{168}{720} - \frac{125}{720}
+        = \frac{43}{720}.
+    \]
+    \[
+        \Cov(X,Y)
+        = \E[XY] - \E X \cdot \E Y
+        = \frac{1}{3} - \frac{3}{4}\cdot \frac{5}{12}
+        = \frac{1}{3} - \frac{15}{48}
+        = \frac{16}{48} - \frac{15}{48}
+        = \frac{1}{48}.
+    \]
+
+    Коэффициент корреляции:
+    \[
+        \rho_{X,Y}
+        = \frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}
+        = \frac{\frac{1}{48}}{\sqrt{\frac{3}{80}\cdot \frac{43}{720}}}
+        = \frac{\frac{1}{48}}{\sqrt{\frac{129}{57600}}}
+        = \frac{\frac{1}{48}}{\frac{\sqrt{129}}{240}}
+        = \frac{240}{48\sqrt{129}}
+        = \frac{5}{\sqrt{129}}.
+    \]
+
+    \subsection*{(c) Преобразование $U = \dfrac{2Y}{X}$, $V = 2X - Y$}
+
+    \textbf{Обратное преобразование.}
+    Решим систему
+    \[
+        u = \frac{2y}{x}, \qquad v = 2x - y
+        \quad \Longrightarrow \quad
+        x = \frac{2v}{4-u},\quad
+        y = \frac{u v}{4-u}.
+    \]
+
+    \textbf{Область значений.}
+    Изначально $(x,y)$ лежат в треугольнике $0 \le y < x \le 1$.
+
+    Подставим $x,y$ через $u,v$.
+
+    Условия:
+    \[
+        x = \frac{2v}{4-u} \ge 0,\quad
+        y = \frac{uv}{4-u} \ge 0,\quad
+        y < x,\quad
+        x \le 1.
+    \]
+
+    Из анализа неравенств следует:
+    \[
+        0 \le u < 2,\qquad
+        0 \le v \le \frac{4-u}{2}.
+    \]
+
+    (Если $u \ge 2$, то неравенство $y<x$ нарушается; знаки $x,y \ge 0$ также вынуждают $u\ge0$, $v\ge0$, и $x\le1$ даёт верхнюю грань $v\le(4-u)/2$.)
+
+    \textbf{Якобиан.}
+    Рассмотрим отображение $(u,v)\mapsto (x,y)$:
+    \[
+        x(u,v)=\frac{2v}{4-u},\qquad
+        y(u,v)=\frac{uv}{4-u}.
+    \]
+    Якобиан:
+    \[
+        J =
+        \begin{vmatrix}
+            \frac{\partial x}{\partial u} & \frac{\partial x}{\partial v}\\[6pt]
+            \frac{\partial y}{\partial u} & \frac{\partial y}{\partial v}
+        \end{vmatrix}.
+    \]
+    Вычисления дают
+    \[
+        \left|\det \frac{\partial(x,y)}{\partial(u,v)}\right|
+        = \frac{2v}{(4-u)^2}.
+    \]
+
+    \textbf{Совместная плотность $(U,V)$.}
+    Так как
+    \[
+        f_{X,Y}(x,y) = 2(x+y),
+    \]
+    то при подстановке $x=\frac{2v}{4-u}$, $y=\frac{uv}{4-u}$ имеем
+    \[
+        x+y = \frac{2v}{4-u} + \frac{uv}{4-u}
+        = \frac{v(2+u)}{4-u}.
+    \]
+    Следовательно,
+    \[
+        f_{U,V}(u,v)
+        = f_{X,Y}(x(u,v),y(u,v))
+        \cdot
+        \left|\det \frac{\partial(x,y)}{\partial(u,v)}\right|
+        = 2 \cdot \frac{v(2+u)}{4-u}
+        \cdot
+        \frac{2v}{(4-u)^2}
+        = \frac{4(2+u)\,v^2}{(4-u)^3}.
+    \]
+
+    Итак
+    \[
+        f_{U,V}(u,v)
+        =
+        \begin{cases}
+            \dfrac{4(2+u)\,v^2}{(4-u)^3}, & 0 \le u < 2,\ 0 \le v \le \dfrac{4-u}{2},\\[10pt]
+            0, & \text{иначе.}
+        \end{cases}
+    \]
+
+    \textbf{Маргинальные плотности.}
+
+    1) Для $U$:
+    \[
+        f_U(u)
+        = \int_0^{(4-u)/2} f_{U,V}(u,v)\,dv
+        = \int_0^{(4-u)/2} \frac{4(2+u)\,v^2}{(4-u)^3}\,dv.
+    \]
+    Интегрируя по $v$,
+    \[
+        f_U(u)
+        = \frac{2+u}{6}, \qquad 0 \le u < 2.
+    \]
+
+    2) Для $V$:
+    при фиксированном $v$ область по $u$ задаётся неравенствами
+    \[
+        0 \le u < 2,\qquad
+        v \le \frac{4-u}{2}
+        \quad\Longleftrightarrow\quad
+        u \le 4-2v.
+    \]
+    Отсюда:
+
+    -- Если $0 \le v \le 1$, то $4-2v \ge 2$, значит $u\in[0,2)$.
+
+    -- Если $1 \le v \le 2$, то $4-2v \le 2$, и $u \in[0,\,4-2v]$.
+
+    При $v>2$ область пуста.
+
+    Тогда
+    \[
+        f_V(v)
+        =
+        \begin{cases}
+            \displaystyle
+            \int_0^{2} \frac{4(2+u)v^2}{(4-u)^3}\,du
+            = \frac{5}{4}v^2, & 0 \le v \le 1,\\[12pt]
+            \displaystyle
+            \int_0^{4-2v} \frac{4(2+u)v^2}{(4-u)^3}\,du
+            = \frac{v^2}{4} + 3 - 2v, & 1 \le v \le 2,\\[12pt]
+            0, & \text{иначе.}
+        \end{cases}
+    \]
+
+    \textbf{Являются ли $U$ и $V$ независимыми?}
+
+    Если бы $U$ и $V$ были независимыми, то $f_{U,V}(u,v)=f_U(u)\,f_V(v)$.
+
+    Проверим в точке $(u,v)=(1,1)$:
+    \[
+        f_{U,V}(1,1)
+        = \frac{4(2+1)\cdot 1^2}{(4-1)^3}
+        = \frac{12}{27}
+        = \frac{4}{9}.
+    \]
+    \[
+        f_U(1) = \frac{2+1}{6} = \frac12,
+        \qquad
+        f_V(1) = \frac{5}{4}.
+    \]
+    Тогда
+    \[
+        f_U(1)\,f_V(1)
+        = \frac12 \cdot \frac{5}{4}
+        = \frac{5}{8}
+        \ne \frac{4}{9}.
+    \]
+    Следовательно, $U$ и $V$ не независимы.
+
+
+    \section*{Задача 3}
+
+    Пусть
+    \[
+        X =
+        \begin{pmatrix}
+            X_1\\ X_2\\ X_3\\ X_4
+        \end{pmatrix}
+        \sim
+        \mathcal{N}_4(\mu,\Sigma),
+        \quad
+        \mu =
+        \begin{pmatrix}
+            1\\2\\-3\\0
+        \end{pmatrix},
+        \quad
+        \Sigma =
+        \begin{pmatrix}
+            2 & 2 & -1 & -3\\
+            2 & 3 & -2 & 1\\
+            -1 & -2 & 4 & 0\\
+            -3 & 1 & 0 & 5
+        \end{pmatrix}.
+    \]
+
+    \subsection*{(a) Распределение $X_1 - 2X_3$ и коэффициент корреляции между $X_1$ и $X_3$}
+
+    Обозначим
+    \[
+        Y = X_1 - 2X_3 = a^\top X,\quad
+        a = (1,0,-2,0)^\top.
+    \]
+    Линейная комбинация многомерной нормали снова нормальна:
+    \[
+        Y \sim \mathcal{N}(m_Y,\sigma_Y^2),
+    \]
+    где
+    \[
+        m_Y = a^\top \mu
+        = 1 - 2(-3)
+        = 7,
+    \]
+    \[
+        \sigma_Y^2 = a^\top \Sigma a.
+    \]
+    Вычислим $a^\top \Sigma a$:
+    \[
+        \sigma_Y^2 = 22.
+    \]
+    Итого
+    \[
+        X_1 - 2X_3 \sim \mathcal{N}(7,\,22).
+    \]
+
+    Теперь коэффициент корреляции между $X_1$ и $X_3$:
+    \[
+        \Corr(X_1,X_3)
+        = \frac{\Cov(X_1,X_3)}{\sqrt{\Var(X_1)\Var(X_3)}}.
+    \]
+    Из матрицы $\Sigma$:
+    \[
+        \Var(X_1)=2,\quad
+        \Var(X_3)=4,\quad
+        \Cov(X_1,X_3)=-1.
+    \]
+    Значит
+    \[
+        \Corr(X_1,X_3)
+        = \frac{-1}{\sqrt{2\cdot 4}}
+        = -\frac{1}{2\sqrt{2}}.
+    \]
+
+    \subsection*{(b) Распределение вектора
+        $\bigl(X_2 - 2X_4 + 3X_3 + 1,\; X_1 - 2X_2 + X_4\bigr)^\top$}
+
+    Обозначим
+    \[
+        Y =
+        \begin{pmatrix}
+            Y_1\\ Y_2
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            X_2 - 2X_4 + 3X_3 + 1\\[4pt]
+            X_1 - 2X_2 + X_4
+        \end{pmatrix}.
+    \]
+    Это можно записать как
+    \[
+        Y = A X + b,
+        \quad
+        A =
+        \begin{pmatrix}
+            0 & 1 & 3 & -2\\
+            1 & -2 & 0 & 1
+        \end{pmatrix},
+        \quad
+        b=
+        \begin{pmatrix}
+            1\\[2pt]
+            0
+        \end{pmatrix}.
+    \]
+    Если $X \sim \mathcal{N}_4(\mu,\Sigma)$, то $Y \sim \mathcal{N}_2(A\mu+b,\; A\Sigma A^\top)$.
+
+    Считаем среднее:
+    \[
+        A\mu + b
+        =
+        \begin{pmatrix}
+            -6\\
+            -3
+        \end{pmatrix}.
+    \]
+
+    Считаем ковариационную матрицу:
+    \[
+        A\Sigma A^\top
+        =
+        \begin{pmatrix}
+            43 & 6\\
+            6 & 1
+        \end{pmatrix}.
+    \]
+
+    Следовательно,
+    \[
+        Y \sim \mathcal{N}_2\!\left(
+                                  \begin{pmatrix}
+                                      -6\\
+                                      -3
+                                  \end{pmatrix},
+                                  \begin{pmatrix}
+                                      43 & 6\\
+                                      6 & 1
+                                  \end{pmatrix}
+        \right).
+    \]
+
+    \subsection*{(c) Найти распределение отношения $\dfrac{X_2}{X_4}$}
+
+    Обозначим
+    \[
+        R = \frac{X_2}{X_4}.
+    \]
+    Пусть рассматривается двумерный вектор $(X_2,X_4)$, который является двумерной нормальной случайной величиной с параметрами
+    \[
+        \begin{pmatrix}
+            X_2\\ X_4
+        \end{pmatrix}
+        \sim
+        \mathcal{N}_2\!\left(
+                           \begin{pmatrix}
+                               2\\ 0
+                           \end{pmatrix},
+                           \;
+                           \Sigma_{24}
+        \right),
+        \quad
+        \Sigma_{24}
+        =
+        \begin{pmatrix}
+            3 & 1\\
+            1 & 5
+        \end{pmatrix}.
+    \]
+    Его плотность имеет вид
+    \[
+        f_{X_2,X_4}(x_2,x_4)
+        = \frac{1}{2\pi\sqrt{|\Sigma_{24}|}}
+        \exp\!\left(
+                  -\frac12
+                  \begin{pmatrix}
+                      x_2-2\\ x_4
+                  \end{pmatrix}^{\!\top}
+                  \Sigma_{24}^{-1}
+                  \begin{pmatrix}
+                      x_2-2\\ x_4
+                  \end{pmatrix}
+        \right),
+    \]
+    где
+    \[
+        |\Sigma_{24}| = 14,
+        \qquad
+        \Sigma_{24}^{-1}
+        = \frac{1}{14}
+        \begin{pmatrix}
+            5 & -1\\
+            -1 & 3
+        \end{pmatrix}.
+    \]
+
+    Чтобы получить плотность $f_R(r)$ случайной величины $R = X_2/X_4$, используем преобразование
+    \[
+        (x_2,x_4) = (rv, v),\quad v\in\mathbb{R}.
+    \]
+    Якобиан перехода $(r,v)\mapsto (x_2,x_4)$ равен $|v|$. Тогда
+    \[
+        f_R(r)
+        = \int_{-\infty}^{+\infty} |v|\,
+        f_{X_2,X_4}(rv, v)\,dv.
+    \]
+
+    Это корректное выражение плотности распределения отношения нормальных компонент (в общем случае явная элементарная формула не упрощается).
+
+    \subsection*{(d) Найти распределение вектора $\bigl(\frac{1}{X_2},\,X_3\bigr)$}
+
+    Обозначим
+    \[
+        U = \frac{1}{X_2},\qquad V = X_3.
+    \]
+    Рассмотрим отображение $(u,v)\mapsto(x_2,x_3) = \bigl(\frac{1}{u},\,v\bigr)$, то есть
+    \[
+        x_2 = \frac{1}{u},\quad x_3 = v.
+    \]
+    Якобиан:
+    \[
+        \left|\det \frac{\partial(x_2,x_3)}{\partial(u,v)} \right|
+        = \left|\det
+              \begin{pmatrix}
+                  -\frac{1}{u^2} & 0\\
+                  0 & 1
+              \end{pmatrix}
+        \right|
+        = \frac{1}{u^2}.
+    \]
+
+    Пара $(X_2,X_3)$ является двумерно нормальной:
+    \[
+        \begin{pmatrix}
+            X_2\\ X_3
+        \end{pmatrix}
+        \sim
+        \mathcal{N}_2\!\left(
+                           \begin{pmatrix}
+                               2\\ -3
+                           \end{pmatrix},
+                           \;
+                           \Sigma_{23}
+        \right),
+        \quad
+        \Sigma_{23} =
+        \begin{pmatrix}
+            3 & -2\\
+            -2 & 4
+        \end{pmatrix}.
+    \]
+    Её плотность обозначим $f_{X_2,X_3}(x_2,x_3)$.
+
+    Тогда совместная плотность $(U,V)$ равна
+    \[
+        f_{U,V}(u,v)
+        = \frac{1}{u^2}\,
+        f_{X_2,X_3}\!\left(\frac{1}{u},\,v\right),
+        \quad u\neq 0.
+    \]
+    (Событие $X_2=0$ имеет нулевую вероятность при непрерывном нормальном распределении, поэтому обращение $u=1/x_2$ корректно п.н.)
+
+    Таким образом задано распределение пары $\left(\frac{1}{X_2}, X_3\right)$ через явную формулу для плотности.
+
+    \subsection*{(e)$^\ast$ Найти распределение $\sqrt{X_2^2 + X_3^2}$}
+
+    Пусть
+    \[
+        R = \sqrt{X_2^2 + X_3^2}.
+    \]
+    Это длина вектора $(X_2,X_3)$.
+
+    Плотность $(X_2,X_3)$ нам известна: это двумерная нормальная плотность
+    \[
+        f_{X_2,X_3}(x_2,x_3)
+        = \frac{1}{2\pi\sqrt{|\Sigma_{23}|}}
+        \exp\!\left(
+                  -\frac12
+                  \begin{pmatrix}
+                      x_2-2\\ x_3+3
+                  \end{pmatrix}^{\!\top}
+                  \Sigma_{23}^{-1}
+                  \begin{pmatrix}
+                      x_2-2\\ x_3+3
+                  \end{pmatrix}
+        \right).
+    \]
+
+    Чтобы получить плотность $f_R(r)$, можно перейти к полярным координатам
+    \[
+        x_2 = r \cos\theta,\quad
+        x_3 = r \sin\theta,
+        \quad r \ge 0,\ \theta \in [0,2\pi).
+    \]
+    Якобиан такого перехода равен $r$. Тогда маргинальная плотность $R$ равна
+    \[
+        f_R(r)
+        = \int_{0}^{2\pi} r\,
+        f_{X_2,X_3}\bigl(r\cos\theta,\ r\sin\theta\bigr)\,d\theta,
+        \qquad r \ge 0.
+    \]
+
+    В общем случае (когда ковариационная матрица не равна $\sigma^2 I$ и вектор не имеет нулевого среднего) это выражение не упрощается в элементарные функции. Тем не менее формула выше корректно задаёт распределение $\sqrt{X_2^2 + X_3^2}$.
+
+
+\end{document}
