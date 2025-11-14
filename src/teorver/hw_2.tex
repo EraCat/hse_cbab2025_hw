@@ -7,6 +7,7 @@
 \usepackage[russian]{babel}
 \usepackage{amsmath,amssymb,amsthm, mathtools}
 \usepackage{geometry}
+\usepackage{tikz}
 \geometry{margin=2cm}
 
 \DeclareMathOperator{\Var}{\mathbb{D}}
@@ -15,7 +16,11 @@
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Pbb}{\mathbb{P}}
 
+\title{Домашняя работа №2}
+\author{Арапов А.А.}
+
 \begin{document}
+    \maketitle
 
     \section*{Задача 0}
 
@@ -71,11 +76,11 @@
     \]
     Если $\Var(Z)>0$, то ковариация не равна нулю, значит $X+Z$ и $Y+Z$ не могут быть независимы (независимые случайные величины имеют нулевую ковариацию).
 
-    Единственный случай, когда $\Var(Z)=0$, это вырожденно-константный $Z\equiv c$. Тогда $X+Z = X+c$ и $Y+Z = Y+c$, и они независимы как сдвиги независимых $X$ и $Y$.
+    Единственный случай, когда $\Var(Z)=0$, это $Z\equiv c$. Тогда $X+Z = X+c$ и $Y+Z = Y+c$, и они независимы как сдвиги независимых $X$ и $Y$.
 
     \medskip
     \noindent
-    \textbf{Вывод:} вообще говоря, $X+Z$ и $Y+Z$ не являются независимыми. Они независимы только в вырожденном случае, когда $Z$ почти наверное константа.
+    \textbf{Вывод:} вообще говоря, $X+Z$ и $Y+Z$ не являются независимыми. Они независимы только в случае, когда $Z$ почти наверное константа.
 
 
     \section*{Задача 1}
@@ -242,6 +247,29 @@
 
     Пусть сначала $0 \le x \le 1$, $0 \le y \le 1$.
 
+    \begin{tikzpicture}[scale=5]
+        % Оси
+        \draw[->] (-0.02,0) -- (1.05,0) node[right] {$x'$};
+        \draw[->] (0,-0.02) -- (0,1.05) node[above] {$y'$};
+
+        % Треугольник поддержки: 0 ≤ y' ≤ x' ≤ 1
+        \fill[gray!20] (0,0) -- (1,0) -- (1,1) -- cycle;
+
+        % Линия y'=x'
+        \draw[thick] (0,0) -- (1,1) node[anchor=south west] {$y'=x'$};
+
+        % Подписи вершин
+        \node[below left] at (0,0) {$(0,0)$};
+        \node[below]      at (1,0) {$(1,0)$};
+        \node[left]       at (1,1) {$(1,1)$};
+
+        % Текст
+        \node at (0.6,0.15) {$f_{X,Y}(x',y')>0$};
+        \node at (0.7,0.6) {$y' \le x'$};
+
+    \end{tikzpicture}
+
+
     \textbf{Случай 1: $0 \le x \le y \le 1$.}
     Тогда условие $Y \le y$ не является ограничением, так как для всех $x' \le x$ и $y' < x'$ мы имеем $y' \le x' \le x \le y$. Значит
     \[
@@ -262,6 +290,61 @@
     \]
 
     \textbf{Случай 2: $0 \le y \le x \le 1$.}
+
+    \begin{tikzpicture}[scale=5]
+        % Параметры точки (x,y) с y <= x
+        \def\x{0.7}
+        \def\y{0.4}
+
+        % Оси
+        \draw[->] (-0.02,0) -- (1.05,0) node[right] {$x'$};
+        \draw[->] (0,-0.02) -- (0,1.05) node[above] {$y'$};
+
+        % Глобальная поддержка
+        \fill[gray!15] (0,0) -- (1,0) -- (1,1) -- cycle;
+        \draw[thick] (0,0) -- (1,1) node[anchor=south west] {$y'=x'$};
+
+        % Прямоугольник X ≤ x, Y ≤ y
+        \draw[fill=yellow!30, opacity=0.6]
+        (0,0) rectangle (\x,\y);
+
+        % Часть 1: треугольник 0 ≤ x' ≤ y, 0 ≤ y' ≤ x'
+        \fill[blue!40, opacity=0.6]
+        (0,0) -- (\y,0) -- (\y,\y) -- cycle;
+
+        % Часть 2: "полоса" y ≤ x' ≤ x, 0 ≤ y' ≤ y
+        \fill[blue!70, opacity=0.4]
+        (\y,0) -- (\x,0) -- (\x,\y) -- (\y,\y) -- cycle;
+
+        % Пунктирные линии к (x,y)
+        \draw[dashed, red] (\x,0) -- (\x,\y);
+        \draw[dashed, red] (0,\y) -- (\x,\y);
+
+        % Подписи контрольных точек
+        \filldraw[red] (\x,\y) circle (0.006);
+        \node[red, anchor=south west] at (\x,\y) {$\,(x,y)$};
+
+        \node[below left] at (0,0) {$(0,0)$};
+        \node[below]      at (\x,0) {$(x,0)$};
+        \node[below]      at (\y,0) {$(y,0)$};
+        \node[left]       at (\y,\y) {$(y,y)$};
+        \node[left]       at (\x,\y) {$(x,y)$};
+
+        % Текст пояснений
+        \node at (0.15,0.07) {\small часть 1};
+        \node at (0.15,0.13) {\small $x' \in [0,y]$};
+        \node at (0.15,0.19) {\small $y' \in [0,x']$};
+
+        \node at (0.55,0.12) {\small часть 2};
+        \node at (0.55,0.18) {\small $x' \in [y,x]$};
+        \node at (0.55,0.24) {\small $y' \in [0,y]$};
+
+        \node at (0.75,0.15) {\small поддержка};
+        \node at (0.8,0.6)  {\small $y'\le x'$};
+
+    \end{tikzpicture}
+
+
     Теперь условие $Y \le y$ ``отрезает'' область по горизонтали. Тогда
     \[
         F(x,y)
@@ -348,7 +431,7 @@
         = \frac{5}{12}.
     \]
 
-    \textbf{Квадраты.}
+    \textbf{Вторые моменты.}
     \[
         \E X^2
         = \int_0^1 \int_0^x x^2 \cdot 2(x+y)\,dy\,dx
@@ -379,7 +462,7 @@
         = \frac{7}{30}.
     \]
 
-    \textbf{Поперечный момент.}
+    \textbf{Смешанный момент.}
     \[
         \E[XY]
         = \int_0^1 \int_0^x x y \cdot 2(x+y)\,dy\,dx
