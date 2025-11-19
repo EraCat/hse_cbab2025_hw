@@ -110,7 +110,6 @@ def calculator(n: int):
             cur = min(cur, dp[int(i / 3)] + 1)
         dp[i] = cur
 
-
     print(dp[n])
     print(*restore_answer(dp, n))
 
@@ -137,16 +136,56 @@ def run_calculator():
     calculator(n)
 
 
-#     1 - *2
-# 2 *3
-# 1
+def three_subseq(a: list[int], b: list[int], c: list[int]):
+    dp = [[[0] * (len(a) + 1) for _ in range(len(b) + 1)] for _ in range(len(c) + 1)]
+
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
+            for k in range(1, len(c) + 1):
+                if a[i - 1] == b[j - 1] == c[k - 1]:
+                    dp[k][j][i] = dp[k - 1][j - 1][i - 1] + 1
+                else:
+                    dp[k][j][i] = max(dp[k][j - 1][i], dp[k - 1][j][i], dp[k][j][i - 1])
+
+    return dp[-1][-1][-1]
+
+
+def run_three_subseq():
+    input()
+    a = list(map(int, input().split()))
+    input()
+    b = list(map(int, input().split()))
+    input()
+    c = list(map(int, input().split()))
+
+    print(three_subseq(a, b, c))
+
+
+def npp(a: list[int]):
+    dp = [1] * len(a)
+
+    for i in range(len(a)):
+        for j in range(i):
+            if a[i] % a[j] == 0:
+                dp[i] = max(dp[i], dp[j] + 1)
+
+    return max(dp)
+
+
+def run_npp():
+    n = int(input())
+    a = list(map(int, input().split()))
+
+    print(npp(a))
 
 
 def main():
     # run_rabbit()
     # run_cube()
     # run_backpack()
-    run_calculator()
+    # run_calculator()
+    # run_three_subseq()
+    run_npp()
 
 
 if __name__ == '__main__':
