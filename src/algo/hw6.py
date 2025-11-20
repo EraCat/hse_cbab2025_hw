@@ -1,3 +1,4 @@
+import math
 import sys
 
 
@@ -179,13 +180,74 @@ def run_npp():
     print(npp(a))
 
 
+def post_office(n, m, x: list[int]):
+    pref = [0] * (n + 1)
+    for i in range(n):
+        pref[i + 1] = pref[i] + x[i]
+
+    def segment_cost(i2, j2):
+        mid2 = (i2 + j2) // 2
+        left = x[mid2] * (mid2 - i2 + 1) - (pref[mid2 + 1] - pref[i2])
+        right = (pref[j2 + 1] - pref[mid2 + 1]) - x[mid2] * (j2 - mid2)
+        return left + right
+
+    cost = [[0] * (n + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(i, n + 1):
+            cost[i][j] = segment_cost(i, j)
+
+    dp = [[math.inf] * (n + 1) for _ in range(m + 1)]
+    prev = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, n + 1):
+        dp[1][i] = cost[1][i]
+        prev[1][i] = 0
+
+    # основная динамика
+    for k in range(2, m + 1):
+        for i in range(k, n + 1):
+            best = math.inf
+            best_t = 0
+            for t in range(k - 1, i):
+                cur = dp[k - 1][t] + cost[t + 1][i]
+                if cur < best:
+                    best = cur
+                    best_t = t
+            dp[k][i] = best
+            prev[k][i] = best_t
+
+    print(dp[m][n])
+
+    #restore
+    offices = []
+    k, i = m, n
+    while k >= 1:
+        t = prev[k][i]
+        L, R = t + 1, i
+        mid = (L + R) // 2
+        offices.append(x[mid])  # отделение в медиане последнего блока
+        i = t
+        k -= 1
+
+    offices.reverse()
+    print(*offices)
+
+
+def run_post_office():
+    n, m = map(int, input().split())
+    x = list(map(int, input().split()))
+
+    post_office(n, m, x)
+
 def main():
     # run_rabbit()
     # run_cube()
     # run_backpack()
     # run_calculator()
     # run_three_subseq()
-    run_npp()
+    # run_npp()
+    run_post_office()
+
 
 
 if __name__ == '__main__':
