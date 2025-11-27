@@ -1,3 +1,6 @@
+from time import process_time_ns
+
+
 def shortest_g_path(martix):
     INF = 10 ** 9
     n = len(martix)
@@ -159,10 +162,92 @@ def run_mark_and_jump_2():
     print(mark_and_jump_2(n, x, y, marks, unmarks))
 
 
+def gnomi(n, edges):
+    dp = [0] * (1 << n)
+    dp[0] = 1
+    priority_masks = [0] * n
+
+    for x, y in edges:
+        x -= 1
+        y -= 1
+        # x -> y
+        priority_masks[y] |= 1 << x
+
+    for mask in range(1 << n):
+        for g in range(n):
+            if (mask & (1 << g)) != 0:
+                continue
+            if priority_masks[g] & mask != priority_masks[g]:
+                continue
+
+            new_mask = mask | (1 << g)
+            dp[new_mask] += dp[mask]
+
+    return dp[-1]
+
+
+def run_gnomi():
+    n, m = map(int, input().split())
+    edges = []
+    for _ in range(m):
+        x, y = map(int, input().split())
+        edges.append((x, y))
+
+    print(gnomi(n, edges))
+
+
+def bottle_caps(required_caps, offers):
+    k = max(required_caps)
+    INF = 10 ** 8
+    dp = [INF] * (1 << k)
+    dp[0] = 0
+
+    target_mask = 0
+    for c in required_caps:
+        target_mask |= (1 << (c - 1))
+
+    offer_masks = []
+    for i in range(len(offers)):
+        mask = 0
+        for caps in offers[i][1]:
+            if target_mask & (1 << (caps - 1)):
+                mask |= (1 << (caps - 1))
+
+        offer_masks.append((offers[i][0], mask))
+
+    for cost, set_mask in offer_masks:
+        for mask in range(1 << k):
+            new_mask = mask | set_mask
+            dp[new_mask] = min(dp[new_mask], dp[mask] + cost)
+
+    return dp[target_mask]
+
+
+def run_bottle_caps():
+    n = int(input())
+    offers = []
+    for i in range(n):
+        offers.append((int(input()), [i+1]))
+
+    m = int(input())
+    for i in range(m):
+        data = list(map(int, input().split()))
+        cost = data[0]
+        caps = data[2:]
+        offers.append((cost, caps))
+
+    req = list(map(int, input().split()))
+    required_caps = req[1:]
+
+    print(bottle_caps(required_caps, offers))
+
+
 def main():
     # run_shortest_g_path()
     # run_mark_and_jump()
-    run_mark_and_jump_2()
+    # run_mark_and_jump_2()
+    # run_gnomi()
+    run_bottle_caps()
 
 
 if __name__ == '__main__':
