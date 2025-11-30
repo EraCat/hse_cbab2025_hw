@@ -117,15 +117,129 @@ def unrle(s):
 
     return result
 
-def build_str(commands):
-    pass
 
+def build_str(commands):
+    from collections import deque
+
+    result = deque()
+    for text, count in commands:
+        if count > 0:
+            result.append(text * count)
+        else:
+            result.appendleft(text * (-count))
+
+    return ''.join(result)
+
+
+def profile_sorted(data):
+    count = 0
+
+    def compare(x):
+        nonlocal count
+        count += 1
+        return x
+
+    res = sorted(data, key=compare)
+
+    return res, count
+
+
+def sort_substrs(s: str) -> int:
+    n = len(s)
+    k = n // 2 + 1
+
+    idxs = list(range(k))
+
+    def cmp(a: int, b: int) -> int:
+        if a == b:
+            return 0
+        la = n - 2 * a
+        lb = n - 2 * b
+
+        slice_a = s[a: a + la]
+        slice_b = s[b: b + lb]
+
+        if slice_a < slice_b:
+            return -1
+        if slice_a > slice_b:
+            return 1
+        return 0
+
+    from functools import cmp_to_key
+    idxs.sort(key=cmp_to_key(cmp))
+
+    total = 0
+    cnt = (k + 1) // 2
+    for i in idxs[::2]:
+        total += n - 2 * i
+
+    return round(total / cnt)
+
+
+def count_non_tuples(data):
+    count = 0
+
+    # (obj, state): state=0 -> вход, state=1 -> выход (нужно для корректного in_path по спискам)
+    stack = [(data, 0)]
+    in_path_lists = set()  # id(list) для списков, которые сейчас в пути
+
+    while stack:
+        obj, state = stack.pop()
+
+        if isinstance(obj, list):
+            oid = id(obj)
+
+            if state == 0:
+                # список как элемент -> считаем его
+                count += 1
+
+                # цикл?
+                if oid in in_path_lists:
+                    return -1
+                in_path_lists.add(oid)
+
+                # событие "выхода" из списка
+                stack.append((obj, 1))
+
+                # разворачиваем элементы списка
+                for x in reversed(obj):
+                    stack.append((x, 0))
+            else:
+                in_path_lists.remove(oid)
+
+        elif isinstance(obj, tuple):
+            # кортеж НЕ считаем как элемент, просто раскрываем
+            for x in reversed(obj):
+                stack.append((x, 0))
+
+        else:
+            # всё остальное считаем как 1 и внутрь не лезем
+            count += 1
+
+    return count
+
+
+def hash_func(p, n, s):
+    """
+    s - строка
+    p - простое число (гарантируется)
+    n - натуральное число (гарантируется)
+    """
+
+    h = 0
+    for ch in s:
+        h = (h * p + ord(ch)) % n
+
+    return h
 
 def main():
     input_seq = input()
     # print(is_balanced(input_seq))
     # print(rle(input_seq))
-    print(unrle(input_seq))
+    # print(unrle(input_seq))
+    # print(profile_sorted([5,2,3,2,1]))
+    # print(sort_substrs(input_seq))
+    print(hash_func(101, 1000000007, input_seq))
 
 
 if __name__ == "__main__":
