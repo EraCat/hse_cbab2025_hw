@@ -289,7 +289,12 @@ class KNearest:
             Минимальный размер листа в KD-дереве.
 
         """
-        pass
+        self.n_neighbors = n_neighbors
+        self.leaf_size = leaf_size
+        self.tree : KDTree = None
+        self.y = None
+        self.classes = None
+
 
     def fit(self, X: np.array, y: np.array) -> NoReturn:
         """
@@ -302,7 +307,10 @@ class KNearest:
             Метки точек, по которым строится классификатор.
 
         """
-        pass
+        self.tree = KDTree(X, leaf_size=self.leaf_size)
+        self.y = np.array(y)
+        self.classes = np.unique(y)
+        self.classes.sort()
 
     def predict_proba(self, X: np.array) -> List[np.array]:
         """
@@ -320,8 +328,20 @@ class KNearest:
             
 
         """
+        indices = self.tree.query(X, k=self.n_neighbors)
 
-        pass
+        # Получаем метки классов этих соседей
+        neighbors_labels = self.y[indices]
+
+        # Считаем количество вхождений каждого класса среди соседей
+        # Используем broadcasting для сравнения:
+        # (n_samples, n_neighbors, 1) == (1, 1, n_classes) -> (n_samples, n_neighbors, n_classes)
+        counts = (neighbors_labels[:, :, None] == self.classes).sum(axis=1)
+
+        # Вычисляем вероятности
+        probabilities = counts / self.n_neighbors
+        return [row for row in probabilities]
+
 
     def predict(self, X: np.array) -> np.array:
         """
