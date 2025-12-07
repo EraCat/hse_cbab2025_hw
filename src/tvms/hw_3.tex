@@ -1,0 +1,442 @@
+%! Author = alexx
+%! Date = 06.12.2025
+
+% Packages
+\documentclass[12pt]{article}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{amstext}
+
+\title{Домашняя работа №3}
+\author{Арапов А.А.}
+\date{}
+
+% Document
+\begin{document}
+    \maketitle
+
+
+    \section*{№1}
+    \[
+        F_\xi(x)=\mathbb{P}(\xi\le x).   \eta = F_\xi(\xi).
+    \]
+
+    \textbf{a)}
+    \bigskip
+    Пусть $\xi$ принимает значения $x_1<x_2<\dots$ с вероятностями
+    $p_i=\mathbb{P}(\xi=x_i)$. Тогда
+    \[
+        F_\xi(x_i)=\sum_{j:\,x_j\le x_i} p_j = \sum_{j=1}^i p_j.
+    \]
+    При $\{\xi=x_i\}$ $\eta=F_\xi(\xi)=F_\xi(x_i)$, значит
+    \[
+        \mathbb{P}\bigl(\eta=F_\xi(x_i)\bigr)=\mathbb{P}(\xi=x_i)=p_i.
+    \]
+    Следовательно, $\eta$ дискретна и принимает значения $F_\xi(x_i)$ с теми же
+    вероятностями, что и $\xi$ на $x_i$.
+
+    Из условия:
+    \[
+        \begin{aligned}
+            &\mathbb{P}(\xi=-5)=0.1,\quad \mathbb{P}(\xi=-2)=0.15,\quad \mathbb{P}(\xi=0)=0.2,\\
+            &\mathbb{P}(\xi=1)=0.15,\quad \mathbb{P}(\xi=2)=0.25,\quad \mathbb{P}(\xi=7)=0.05,\quad
+            \mathbb{P}(\xi=10)=0.1.
+        \end{aligned}
+    \]
+    Считаем значения $F_\xi(x)$ в точках:
+    \[
+        \begin{aligned}
+            F_\xi(-5)&=0.10,\\
+            F_\xi(-2)&=0.10+0.15=0.25,\\
+            F_\xi(0) &=0.25+0.20=0.45,\\
+            F_\xi(1) &=0.45+0.15=0.60,\\
+            F_\xi(2) &=0.60+0.25=0.85,\\
+            F_\xi(7) &=0.85+0.05=0.90,\\
+            F_\xi(10)&=0.90+0.10=1.
+        \end{aligned}
+    \]
+    Получаем распределение $\eta=F_\xi(\xi)$:
+    \[
+        \begin{aligned}
+            &\mathbb{P}(\eta=0.10)=0.10,\qquad
+            \mathbb{P}(\eta=0.25)=0.15,\qquad
+            \mathbb{P}(\eta=0.45)=0.20,\\
+            &\mathbb{P}(\eta=0.60)=0.15,\qquad
+            \mathbb{P}(\eta=0.85)=0.25,\qquad
+            \mathbb{P}(\eta=0.90)=0.05,\qquad
+            \mathbb{P}(\eta=1)=0.10.
+        \end{aligned}
+    \]
+
+    \bigskip
+    \textbf{b)}
+    Пусть $p\in(0,1)$ и
+    \[
+        \mathbb{P}(\xi=k)=p(1-p)^{k-1},\qquad k=1,2,\dots
+    \]
+    Тогда для $k\in\mathbb{N}$ (геом. прогрессия):
+    \[
+        F_\xi(k)=\mathbb{P}(\xi\le k)=\sum_{i=1}^{k} p(1-p)^{i-1}
+        = p\cdot \frac{1-(1-p)^k}{1-(1-p)}=1-(1-p)^k.
+    \]
+    Следовательно,
+    \[
+        \eta = F_\xi(\xi)=1-(1-p)^{\xi}.
+    \]
+    Значения $\eta$:
+    \[
+        x_k = 1-(1-p)^k,\qquad k=1,2,\dots
+    \]
+    и
+    \[
+        \mathbb{P}(\eta=x_k)=\mathbb{P}(\xi=k)=p(1-p)^{k-1},\qquad k=1,2,\dots
+    \]
+    То есть $\eta$ дискретна с функцией распределения
+    \[
+        F_\xi(\xi)=1-(1-p)^{\xi}.
+    \]
+
+
+    \bigskip
+    \bigskip
+
+
+    \section*{№2}
+
+    Пусть $X_1,\dots,X_n$ — н.о.р. из $\mathrm{Exp}(a)$, и $X_{(n)}=\max\{X_1,\dots,X_n\}$.
+    Найти распределение $Y_n=X_{(n)}-\ln n$ и предел при $n\to\infty$.
+
+    \medskip
+    \[
+        F(x)=\mathbb{P}(X_i\le x)=1-e^{-ax},\qquad x\ge 0.
+    \]
+
+    \medskip
+    \textbf{1) Распределение максимума.}
+    Для $x\ge 0$:
+    \[
+        \mathbb{P}(X_{(n)}\le x)=\mathbb{P}(X_1\le x,\dots,X_n\le x)=F(x)^n=(1-e^{-ax})^n.
+    \]
+
+    \medskip
+    \textbf{2) Распределение $Y_n=X_{(n)}-\ln n$.}
+    Для любого $y\in\mathbb{R}$:
+    \[
+        F_{Y_n}(y)=\mathbb{P}(Y_n\le y)=\mathbb{P}(X_{(n)}\le \ln n + y).
+    \]
+    Так как $X_{(n)}\ge 0$, то $Y_n\ge -\ln n$, значит
+    \[
+        F_{Y_n}(y)=0,\quad y<-\ln n.
+    \]
+    Если $y\ge -\ln n$, то $\ln n+y\ge 0$, то
+    \[
+        F_{Y_n}(y)=(1-e^{-a(\ln n+y)})^n=\bigl(1-n^{-a}e^{-ay}\bigr)^n,\qquad y\ge -\ln n.
+    \]
+
+    \medskip
+    \textbf{3) Предел при $n\to\infty$.}
+    Для фиксированного $y$:
+    \[
+        F_{Y_n}(y)=\bigl(1-n^{-a}e^{-ay}\bigr)^n
+        =\exp\!\Big(n\ln(1-n^{-a}e^{-ay})\Big)
+        \sim \exp\!\big(-n^{1-a}e^{-ay}\big).
+    \]
+    Отсюда:
+    \[
+        \lim_{n\to\infty}F_{Y_n}(y)=
+        \begin{cases}
+            0, & a<1,\\[4pt]
+            \exp(-e^{-y}), & a=1,\\[4pt]
+            1, & a>1.
+        \end{cases}
+    \]
+
+    \medskip
+
+
+    \section*{№ 3}
+    Пусть $X_1,\dots,X_n$ — выборка из распределения с функцией распределения $F$.
+    Эмпирическая функция распределения:
+    \[
+        F_n(x)=\frac1n\sum_{i=1}^n \mathbf 1\{X_i\le x\}.
+    \]
+    Обозначим порядковые статистики $X_{(1)}\le \cdots \le X_{(n)}$.
+
+    \bigskip
+    \textbf{(a) Найти $\mathbb P\{F_n(s)<F_n(t)\}$.}
+
+    Заметим, что
+    \[
+        F_n(s)<F_n(t)\iff \sum_{i=1}^n \mathbf 1\{X_i\le s\}<\sum_{i=1}^n \mathbf 1\{X_i\le t\}.
+    \]
+    Пусть $s<t$. Тогда $F_n(s)<F_n(t)$ эквивалентно существованию наблюдения в интервале $(s,t]$:
+    \[
+        F_n(s)<F_n(t)\iff \exists i:\ s<X_i\le t.
+    \]
+    Следовательно,
+    \[
+        \mathbb P(F_n(s)<F_n(t))
+        =1-\mathbb P(\forall i:\ X_i\notin(s,t])
+        =1-\Bigl(1-\mathbb P(s<X\le t)\Bigr)^n.
+    \]
+    Так как $\mathbb P(s<X\le t)= P(X\le t) - P(X\le s) = F(t)-F(s)$, то
+    \[
+        \boxed{\ \mathbb P(F_n(s)<F_n(t))=1-\bigl(1-(F(t)-F(s))\bigr)^n
+            =1-\bigl(1-F(t)+F(s)\bigr)^n,\quad s<t.\ }
+    \]
+    Если $s\ge t$, то $F_n(s)\ge F_n(t)$ всегда, поэтому
+    \[
+        \boxed{\ \mathbb P(F_n(s)<F_n(t))=0,\quad s\ge t.\ }
+    \]
+
+    \bigskip
+
+
+    \section*{№4}
+
+    \subsection*{a)}
+    \bigskip
+    Пусть $X_1,\dots,X_n {\sim} \mathrm{Unif}[0,\theta]$.
+    Рассмотрим статистику
+    \[
+        \hat{\theta}=\overline X+\frac{X_{(n)}}{2}, \qquad \overline X=\frac1n\sum_{i=1}^n X_i,\ \ X_{(n)}=\max_i X_i.
+    \]
+
+    \textbf{Несмещённость.}
+    Для равномерного на $[0,\theta]$:
+    \[
+        \mathbb E[\overline X]=\mathbb E[X_1]=\frac{\theta}{2},
+        \qquad
+        \mathbb E[X_{(n)}]=\frac{n}{n+1}\,\theta.
+    \]
+    Тогда
+    \[
+        \mathbb E[\hat{\theta}]=\frac{\theta}{2}+\frac12\cdot\frac{n}{n+1}\theta
+        =\theta\left(\frac12+\frac{n}{2(n+1)}\right)
+        =\theta\cdot\frac{2n+1}{2(n+1)}\neq \theta.
+    \]
+    Следовательно, $\hat{\theta}$ является смещённой оценкой $\theta$.
+
+    \textbf{Состоятельность.}
+    По закону больших чисел
+    \[
+        \overline X \xrightarrow{P} \mathbb E[X_1]=\frac{\theta}{2}.
+    \]
+    Кроме того, для $0<\varepsilon<\theta$:
+    \[
+        \mathbb P(X_{(n)}<\theta-\varepsilon)
+        =\left(\mathbb P(X_1\le \theta-\varepsilon)\right)^n
+        =\left(\frac{\theta-\varepsilon}{\theta}\right)^n
+        =\left(1-\frac{\varepsilon}{\theta}\right)^n \to 0,
+    \]
+    значит $X_{(n)}\xrightarrow{P}\theta$.
+    Следовательно,
+    \[
+        \hat{\theta}=\overline X+\frac{X_{(n)}}2 \xrightarrow{P} \frac{\theta}{2}+\frac{\theta}{2}=\theta,
+    \]
+    то есть $\hat{\theta}$ состоятельна.
+
+    \bigskip
+
+    \subsection*{b)}
+    Пусть $X_1,\dots,X_n {\sim} \mathrm{Unif}[-4\theta,\theta]$.
+    статистика
+    \[
+        \hat{\theta}=3X_{(n)}+X_{(1)}, \qquad X_{(1)}=\min_i X_i,\ \ X_{(n)}=\max_i X_i.
+    \]
+
+    \textbf{Несмещённость.}
+    Для равномерного на $[a,b]$ известны формулы:
+    \[
+        \mathbb E[X_{(n)}]=a+(b-a)\frac{n}{n+1},\qquad
+        \mathbb E[X_{(1)}]=a+(b-a)\frac{1}{n+1}.
+    \]
+    Здесь $a=-4\theta$, $b=\theta$, $b-a=5\theta$, поэтому
+    \[
+        \mathbb E[X_{(n)}]= -4\theta+5\theta\frac{n}{n+1}
+        =\theta\frac{n-4}{n+1},
+        \qquad
+        \mathbb E[X_{(1)}]= -4\theta+5\theta\frac{1}{n+1}
+        =\theta\frac{1-4n}{n+1}.
+    \]
+    Тогда
+    \[
+        \mathbb E[\hat{\theta}]
+        =3\mathbb E[X_{(n)}]+\mathbb E[X_{(1)}]
+        =\frac{\theta}{n+1}\Big(3(n-4)+(1-4n)\Big)
+        =\frac{\theta}{n+1}(-n-11)
+        =-\theta\frac{n+11}{n+1}\neq \theta.
+    \]
+    Следовательно, $\hat{\theta}$ не является несмещённой оценкой $\theta$.
+
+    \textbf{Состоятельность.}
+    Имеем $X_{(n)}\xrightarrow{P}\theta$ и $X_{(1)}\xrightarrow{P}-4\theta$, откуда
+    \[
+        \hat{\theta}=3X_{(n)}+X_{(1)} \xrightarrow{P} 3\theta-4\theta=-\theta\neq \theta.
+    \]
+    Следовательно, $\hat{\theta}$ не состоятельна для $\theta$.
+
+    \subsection*{c)}
+
+    $X_1,\dots,X_n$ — н.о.р., $\mathbb E X = a$, $\mathbb E X^2$ - конечна.
+    Обозначим неизвестную дисперсию
+    \[
+        \sigma^2=\mathrm{Var}(X)=\mathbb E[(X-a)^2].
+    \]
+
+    \textbf{1) Статистика} $\hat{\theta}_1=(\overline X)^2-a^2.$
+
+    Так как $\mathbb E\overline X=a$, то
+    \[
+        \mathbb E[(\overline X)^2]=\mathrm{Var}(\overline X)+(\mathbb E\overline X)^2
+        =\frac{\sigma^2}{n}+a^2.
+    \]
+    Следовательно,
+    \[
+        \mathbb E[\hat{\theta}_1]=\mathbb E[(\overline X)^2]-a^2=\frac{\sigma^2}{n}\neq \sigma^2
+        \quad (\text{если } n>1).
+    \]
+    Значит $\hat{\theta}_1$ не является несмещённой оценкой $\sigma^2$.
+
+    по ЗБЧ $\overline X \xrightarrow{P} a$, значит
+    \[
+        \hat{\theta}_1=(\overline X)^2-a^2 \xrightarrow{P} a^2-a^2=0.
+    \]
+    Если $\sigma^2>0$, то $\hat{\theta}_1$ не может сходиться к $\sigma^2$, значит $\hat{\theta}_1$ не состоятельна
+
+    \medskip
+    \textbf{2) Статистика } $\hat{\theta}_2=\dfrac{1}{n-1}\sum_{i=1}^n (X_i-a)^2.$
+
+    По линейности матожидания:
+    \[
+        \mathbb E\left[\sum_{i=1}^n (X_i-a)^2\right]
+        =\sum_{i=1}^n \mathbb E[(X_i-a)^2]=n\sigma^2,
+    \]
+    поэтому
+    \[
+        \mathbb E[\hat{\theta}_2]=\frac{n}{n-1}\sigma^2\neq \sigma^2,
+    \]
+    то есть $\hat{\theta}_2$ смещённая оценка дисперсии.
+
+    по ЗБЧ для $Y_i=(X_i-a)^2$ (так как $\mathbb E Y_i=\sigma^2<\infty$)
+    \[
+        \frac{1}{n}\sum_{i=1}^n (X_i-a)^2 \xrightarrow{P} \sigma^2.
+    \]
+    \[
+        \hat{\theta}_2=\frac{n}{n-1}\cdot \frac{1}{n}\sum_{i=1}^n (X_i-a)^2,
+        \qquad \frac{n}{n-1}\to 1,
+    \]
+    \[
+        \hat{\theta}_2 \xrightarrow{P} 1\cdot \sigma^2=\sigma^2.
+    \]
+    Следовательно, $\hat{\theta}_2$ — состоятельная оценка $\sigma^2$.
+
+    \medskip
+
+    \subsection*{d)}
+    Случайная величина $\xi$ принимает значения $-2,-1,1,2$ с вероятностями
+    \begin{gather*}
+        \mathbb P_\theta(\xi=-2)=\frac14+\theta,\quad
+        \mathbb P_\theta(\xi=-1)=\frac14-\theta,\quad
+        \mathbb P_\theta(\xi=1)=\frac14-\theta,\quad
+        \mathbb P_\theta(\xi=2)=\frac14+\theta,\\
+        \theta\in\left[-\frac14,\frac14\right].\\
+    \end{gather*}
+    Частоты наблюдений
+    \[
+        v_{-2}=4,\quad v_{-1}=5,\quad v_{1}=7,\quad v_{2}=4,
+        \qquad n=v_{-2}+v_{-1}+v_1+v_2=20.
+    \]
+
+    \bigskip
+    \textbf{Метод моментов}
+
+    \textit{Первый момент}
+    \[
+        \mathbb E_\theta[\xi]
+        =(-2)\Big(\frac14+\theta\Big)+(-1)\Big(\frac14-\theta\Big)
+        +1\Big(\frac14-\theta\Big)+2\Big(\frac14+\theta\Big)=0,
+    \]
+    то есть $\mathbb E_\theta[\xi]\equiv 0$ не зависит от $\theta$.
+    Уравнение $\overline\xi=\mathbb E_\theta[\xi]$ не содержит $\theta$, поэтому по 1-му моменту параметр не найти.
+
+    \medskip
+    \textit{ ВТорой момент}
+    \[
+        \mathbb E_\theta[\xi^2]
+        =4\cdot \mathbb P_\theta(|\xi|=2)+1\cdot \mathbb P_\theta(|\xi|=1).
+    \]
+    Причём
+    \[
+        \mathbb P_\theta(|\xi|=2)=\mathbb P_\theta(\xi=-2)+\mathbb P_\theta(\xi=2)
+        =2\Big(\frac14+\theta\Big)=\frac12+2\theta,
+    \]
+    \[
+        \mathbb P_\theta(|\xi|=1)=\mathbb P_\theta(\xi=-1)+\mathbb P_\theta(\xi=1)
+        =2\Big(\frac14-\theta\Big)=\frac12-2\theta.
+    \]
+    Следовательно,
+    \[
+        \mathbb E_\theta[\xi^2]
+        =4\Big(\frac12+2\theta\Big)+1\Big(\frac12-2\theta\Big)
+        =\frac52+6\theta.
+    \]
+    Выборочный второй момент по частотам:
+    число наблюдений с $|\xi|=2$ равно $n_2=8$ ,
+    с $|\xi|=1$ равно $n_1=12$,
+    \[
+        \overline x_2=\frac{1}{n}\sum_{i=1}^n \xi_i^2=\frac{32+12}{20}=\frac{44}{20}=\frac{11}{5}.
+    \]
+    Метод моментов: $\overline x_2=\mathbb E_\theta[\xi^2]$:
+    \[
+        \frac{11}{5}=\frac52+6\theta
+        \ \Longrightarrow\
+        6\theta=\frac{11}{5}-\frac52=-\frac{3}{10}
+        \ \Longrightarrow\
+        \theta_{\text{ММ}}=-\frac{1}{20}=-0.05
+    \]
+
+    \bigskip
+    \textbf{1) Оценка максимального правдоподобия (МП).}
+
+    Правдоподобие:
+    \[
+        L(\theta)=\left(\frac14+\theta\right)^{v_{-2}+v_2}
+        \left(\frac14-\theta\right)^{v_{-1}+v_1}.
+    \]
+    Обозначим
+    \[
+        n_2=v_{-2}+v_2=8,\qquad n_1=v_{-1}+v_1=12.
+    \]
+    Тогда
+    \[
+        L(\theta)=\left(\frac14+\theta\right)^{n_2}\left(\frac14-\theta\right)^{n_1},
+        \quad
+        \ell(\theta)=\ln L(\theta)=n_2\ln\!\left(\frac14+\theta\right)+n_1\ln\!\left(\frac14-\theta\right).
+    \]
+    Производная:
+    \[
+        \ell'(\theta)=\frac{n_2}{\frac14+\theta}-\frac{n_1}{\frac14-\theta}.
+    \]
+    Приравнивая к нулю,
+    \[
+        \frac{n_2}{\frac14+\theta}=\frac{n_1}{\frac14-\theta}
+        \ \Longrightarrow\
+        n_2\Big(\frac14-\theta\Big)=n_1\Big(\frac14+\theta\Big)
+        \ \Longrightarrow\
+        \theta_{\text{МП}}=\frac{n_2-n_1}{4(n_1+n_2)}=\frac{n_2-n_1}{4n}.
+    \]
+    Подставляя $n_2=8$, $n_1=12$, $n=20$, получаем
+    \[
+        \ \theta_{\text{МП}}=\frac{8-12}{4\cdot 20}=-\frac{1}{20}=-0.05\ .
+    \]
+
+
+\end{document}
