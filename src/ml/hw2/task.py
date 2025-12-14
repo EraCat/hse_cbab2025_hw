@@ -194,7 +194,6 @@ class DBScan:
         tree = KDTree(X, leaf_size=self.leaf_size, metric=self.metric)
         ind = tree.query_radius(X, r=self.eps, return_distance=False)
 
-        # query_radius включает саму точку; убираем её, чтобы соответствовать "других точек"
         neigh = []
         for i in range(X.shape[0]):
             arr = ind[i]
@@ -274,43 +273,113 @@ class DBScan:
 
 # Task 3
 
-class AgglomertiveClustering:
+class AgglomerativeClustering:
     def __init__(self, n_clusters: int = 16, linkage: str = "average"):
-        """
-        
-        Parameters
-        ----------
-        n_clusters : int
-            Количество кластеров, которые необходимо найти (то есть, кластеры 
-            итеративно объединяются, пока их не станет n_clusters)
-        linkage : str
-            Способ для расчета расстояния между кластерами. Один из 3 вариантов:
-            1. average --- среднее расстояние между всеми парами точек, 
-               где одна принадлежит первому кластеру, а другая - второму.
-            2. single --- минимальное из расстояний между всеми парами точек, 
-               где одна принадлежит первому кластеру, а другая - второму.
-            3. complete --- максимальное из расстояний между всеми парами точек,
-               где одна принадлежит первому кластеру, а другая - второму.
-        """
-        pass
+
+        linkage = str(linkage).lower().strip()
+
+        self.n_clusters = n_clusters
+        self.linkage = linkage
+
+        self.labels_ = None
+
+    @staticmethod
+    def _euclidean_dist_matrix(X: np.ndarray) -> np.ndarray:
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        sq = np.sum(X * X, axis=1)
+        dist2 = sq[:, None] + sq[None, :] - 2.0 * (X @ X.T)
+        np.maximum(dist2, 0.0, out=dist2)
+        return np.sqrt(dist2)
 
     def fit_predict(self, X: np.array, y=None) -> np.array:
         """
-        Кластеризует элементы из X, 
-        для каждого возвращает индекс соотв. кластера.
-        Parameters
-        ----------
-        X : np.array
-            Набор данных, который необходимо кластеризовать.
-        y : Ignored
-            Не используемый параметр, аналогично sklearn
-            (в sklearn считается, что все функции fit_predict обязаны принимать 
-            параметры X и y, даже если y не используется).
-        Return
-        ------
-        labels : np.array
-            Вектор индексов кластеров
-            (Для каждой точки из X индекс соотв. кластера).
-
+        Кластеризует элементы из X, для каждого возвращает индекс кластера.
         """
-        pass
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+
+        n = X.shape[0]
+
+        total = 2 * n - 1
+
+        dist = np.full((total, total), np.inf, dtype=float)
+
+        d0 = self._euclidean_dist_matrix(X)
+        np.fill_diagonal(d0, np.inf)
+        dist[:n, :n] = d0
+
+        size = np.zeros(total, dtype=int)
+        size[:n] = 1
+        active = np.zeros(total, dtype=bool)
+        active[:n] = True
+
+        parent = np.full(total, -1, dtype=int)
+
+        next_id = n
+        def merge_distance(a: int, b: int, k: int) -> float:
+            da = dist[a, k]
+            db = dist[b, k]
+            if self.linkage == "single":
+                return da if da < db else db
+            if self.linkage == "complete":
+                return da if da > db else db
+            return (size[a] * da + size[b] * db) / (size[a] + size[b])
+
+        while int(active.sum()) > self.n_clusters:
+            idx = np.where(active)[0]
+            sub = dist[np.ix_(idx, idx)]
+            # диагональ не рассматриваем
+            # (sub - копия, fill_diagonal безопасен)
+            np.fill_diagonal(sub, np.inf)
+
+            pos = int(np.argmin(sub))
+            i_pos, j_pos = divmod(pos, sub.shape[1])
+            a = int(idx[i_pos])
+            b = int(idx[j_pos])
+
+            if b < a:
+                a, b = b, a
+
+            new = next_id
+            next_id += 1
+
+            parent[a] = new
+            parent[b] = new
+
+            # активность
+            active[a] = False
+            active[b] = False
+            active[new] = True
+
+            size[new] = size[a] + size[b]
+
+            others = np.where(active)[0]
+            for k in others:
+                if k == new:
+                    continue
+                val = merge_distance(a, b, int(k))
+                dist[new, k] = val
+                dist[k, new] = val
+
+            dist[new, new] = np.inf
+
+        def find_root(i: int) -> int:
+            while parent[i] != -1:
+                i = parent[i]
+            return i
+
+        roots = [find_root(i) for i in range(n)]
+        uniq = {}
+        lab = 0
+        labels = np.empty(n, dtype=int)
+        for i, r in enumerate(roots):
+            if r not in uniq:
+                uniq[r] = lab
+                lab += 1
+            labels[i] = uniq[r]
+
+        self.labels_ = labels
+        return labels
