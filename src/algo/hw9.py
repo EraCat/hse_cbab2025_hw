@@ -75,8 +75,38 @@ def find_distance_between(graph, s, t):
                 dist[edge.to] = dist[v] + edge.weight
                 pq.put((dist[edge.to], edge.to))
 
-
     return -1 if dist[t] == 10 ** 6 else dist[t]
+
+
+def find_fee_amount(graph, s):
+    cost = [-1] * len(graph)
+    cost[s] = 0
+    queue = deque([s])
+    while queue:
+        v = queue.popleft()
+        for neighbor in graph[v]:
+            if cost[neighbor] == -1:
+                cost[neighbor] = cost[v] + 1
+                queue.append(neighbor)
+
+    print(*cost)
+
+
+
+def run_find_fee_amount():
+    def read_data() -> tuple[list[set[Any]], int]:
+        n, s, m = map(int, input().split())
+        graph = [set() for _ in range(n)]
+
+        for _ in range(m):
+            a, b = map(int, input().split())
+            # graph[a - 1].add(b - 1)
+            graph[b - 1].add(a - 1)
+        return graph, s
+
+    adjacency_list, s = read_data()
+
+    find_fee_amount(adjacency_list, s - 1)
 
 
 def run_find_distance_between():
@@ -85,9 +115,51 @@ def run_find_distance_between():
     print(find_distance_between(graph, s - 1, t - 1))
 
 
+def find_longest_path(graph):
+    ordered_v = topo_sort(graph)
+
+    dist = [0] * len(graph)
+    for v in ordered_v:
+        if dist[v] == -1:
+            continue
+        for w in graph[v]:
+            dist[w] = max(dist[w], dist[v] + 1)
+
+    return max(dist)
+
+def run_find_longest_path():
+    n, m = map(int, input().split())
+    graph = [set() for _ in range(n)]
+    for _ in range(m):
+        a, b = map(int, input().split())
+        graph[a - 1].add(b - 1)
+    print(find_longest_path(graph))
+
+
+def topo_sort(graph):
+    in_degree = [0] * len(graph)
+    for v in range(len(graph)):
+        for w in graph[v]:
+            in_degree[w] = in_degree[w] + 1
+
+    q = deque([v for v in range(len(graph)) if in_degree[v] == 0])
+    order = []
+
+    while q:
+        v = q.popleft()
+        order.append(v)
+        for w in graph[v]:
+            in_degree[w] -= 1
+            if in_degree[w] == 0:
+                q.append(w)
+
+    return order
+
 def main():
     # run_find_sum_between()
-    run_find_distance_between()
+    # run_find_distance_between()
+    # run_find_fee_amount()
+    run_find_longest_path()
 
 
 if __name__ == '__main__':
