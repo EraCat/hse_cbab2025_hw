@@ -155,11 +155,53 @@ def topo_sort(graph):
 
     return order
 
+
+def find_shortest_path(graph, s,t):
+    dist = [10 ** 6] * len(graph)
+    dist[s] = 0
+    parent = [-1] * len(graph)
+
+    pq = PriorityQueue()
+    pq.put((0, s))
+
+    while pq.qsize() > 0:
+        cur_d, v = pq.get_nowait()
+        if cur_d > dist[v]:
+            continue
+        for edge in graph[v]:
+            if dist[edge.to] > dist[v] + edge.weight:
+                parent[edge.to] = v
+                dist[edge.to] = dist[v] + edge.weight
+                pq.put((dist[edge.to], edge.to))
+
+    if dist[t] == 10 ** 6:
+        print(-1)
+        return
+
+    path = []
+    cur = t
+    while cur != -1:
+        path.append(cur + 1)
+        cur = parent[cur]
+
+    path.reverse()
+
+    print(dist[t])
+    print(*path)
+
+
+def run_find_shortest_path():
+    graph, s, t = read_undirected_graph_as_adjacency_list_with_weights()
+
+    find_shortest_path(graph, s - 1, t - 1)
+
+
 def main():
     # run_find_sum_between()
     # run_find_distance_between()
     # run_find_fee_amount()
-    run_find_longest_path()
+    # run_find_longest_path()
+    run_find_shortest_path()
 
 
 if __name__ == '__main__':
