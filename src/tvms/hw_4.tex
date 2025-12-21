@@ -1,0 +1,603 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[russian]{babel}
+
+\title{Домашняя работа №4}
+\author{Арапов А.А.}
+\date{}
+
+
+\begin{document}
+    \maketitle
+
+    \section*{Задание 1. Оценка СКО методом моделирования (Монте--Карло)}
+    Параметр $\theta$ считаем фиксированным(=1).
+
+    \subsection*{Общая схема моделирования}
+
+    Фиксируем:
+    \begin{itemize}
+        \item истинное значение параметра $\theta$;
+        \item объём выборки $n$ (в работе используем $n=200$);
+        \item число повторов Монте--Карло $B$ (в работе используем $B=10\,000$);
+    \end{itemize}
+
+    Для каждого значения $k$ проводим $B$ независимых «экспериментов»:
+    \begin{enumerate}
+        \item генерируем выборку $X_1^{(b)},\dots,X_n^{(b)}$ из заданного распределения при фиксированном $\theta$;
+        \item по формуле из пункта задания вычисляем оценку $\hat\theta_k^{(b)}$;
+        \item считаем ошибку $e_b=\hat\theta_k^{(b)}-\theta$.
+    \end{enumerate}
+
+    Далее оцениваем СКО (RMSE) по $B$ повторам:
+    \[
+        \widehat{\mathrm{RMSE}}(k)
+        =\sqrt{\frac{1}{B}\sum_{b=1}^B\bigl(\hat\theta_k^{(b)}-\theta\bigr)^2}
+        =\sqrt{\frac{1}{B}\sum_{b=1}^B e_b^2 }.
+    \]
+    Затем строим график зависимости $k \mapsto \widehat{\mathrm{RMSE}}(k)$.
+
+    \medskip
+    \noindent\textbf{Выбор диапазонов $k$ в работе:}
+    \[
+        \text{(a)}\ k=2,3,\dots,50;\qquad
+        \text{(b)}\ k=2,3,\dots,50;\qquad
+        \text{(c)}\ k=2,3,\dots,20.
+    \]
+    (В (c) большие $k$ дают сильно нестабильные оценки, поэтому ограничиваем диапазон.)
+
+    \subsection*{(a) $\mathrm{Unif}[0,\theta]$, оценка через квантиль $p=1/k$}
+
+    Пусть $X_1,\dots,X_n\sim \mathrm{Unif}[0,\theta]$.
+    В пункте (a) используется квантиль уровня $p=1/k$.
+    В каждом повторе сортируем выборку и берём порядковую статистику
+    \[
+        \widehat q_{1/k} = X_{(m)}, \qquad m=\left\lceil \frac{n}{k}\right\rceil,
+    \]
+    после чего вычисляем оценку
+    \[
+        \hat\theta_k = k\,\widehat q_{1/k} = k\,X_{(m)}.
+    \]
+    Далее по формуле выше считаем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+    \subsection*{(b) $\mathrm{Unif}[0,\theta]$, моментная оценка}
+
+    Пусть $X_1,\dots,X_n\sim \mathrm{Unif}[0,\theta]$.
+    Для каждого $k$ в каждом повторе считаем
+    \[
+        \overline{X^k}=\frac{1}{n}\sum_{i=1}^n (X_i)^k,
+        \qquad
+        \hat\theta_k=\sqrt[k]{(k+1)\,\overline{X^k}}.
+    \]
+    Затем вычисляем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+    \subsection*{(c) $\mathrm{Exp}(\theta)$, моментная оценка}
+
+    Пусть $X_1,\dots,X_n\sim \mathrm{Exp}(\theta)$, где $\theta$ --- параметр интенсивности
+    в плотности $f(x)=\theta e^{-\theta x}$, $x\ge 0$.
+    Для каждого $k$ в каждом повторе считаем
+    \[
+        \overline{X^k}=\frac{1}{n}\sum_{i=1}^n (X_i)^k,
+        \qquad
+        \hat\theta_k=\sqrt[k]{\frac{k!}{\overline{X^k}}}.
+    \]
+    После этого по $B$ повторам получаем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+    \subsection*{}
+
+    \begin{itemize}
+        \item \textbf{(a)} При росте $k$ берётся всё меньшая квантиль ($p=1/k$) и затем умножается на $k$,
+        поэтому шум усиливается, и $\widehat{\mathrm{RMSE}}(k)$ обычно растёт.
+        \item \textbf{(b)} Для равномерного распределения (ограниченного сверху $\theta$) $\widehat{\mathrm{RMSE}}(k)$ часто убывает и выходит на плато.
+        \item \textbf{(c)} Для экспоненциального распределения из-за неограниченного хвоста величины $X^k$ при больших $k$
+        становятся крайне нестабильными, поэтому $\widehat{\mathrm{RMSE}}(k)$ быстро растёт с $k$.
+    \end{itemize}
+
+
+    \section*{Задача 2. Сравнение эффективности оценок}
+
+    \subsection*{(a) $X_{(1)}$ или $X_{(n)}$ для $\mathrm{Unif}[-\theta,\theta]$}
+
+    Пусть $X_1,\dots,X_n \overset{iid}{\sim} \mathrm{Unif}[-\theta,\theta]$, $\theta>0$.
+    Поскольку распределение симметрично, естественно сравнивать оценки параметра $\theta$ вида
+    \[
+        \hat\theta_{\max}=X_{(n)}, \qquad \hat\theta_{\min}=-X_{(1)}.
+    \]
+    (Сама по себе $X_{(1)}$ как оценка $\theta$ странная по знаку: $X_{(1)}\approx -\theta$.)
+
+    \paragraph{Симметрия.}
+    Рассмотрим $Y_i=-X_i$. Тогда $Y_i\sim \mathrm{Unif}[-\theta,\theta]$ и
+    \[
+        Y_{(n)}=\max_i Y_i=\max_i(-X_i)=-\min_i X_i=-X_{(1)}.
+    \]
+    Но $Y_{(n)} \stackrel{d}{=} X_{(n)}$ (одинаковые распределения, потому что $Y_i$ распределены так же, как $X_i$).
+    Следовательно,
+    \[
+        -X_{(1)} \stackrel{d}{=} X_{(n)}.
+    \]
+    Отсюда:
+    \[
+        \mathrm{MSE}(-X_{(1)})=\mathrm{MSE}(X_{(n)}),\qquad
+        \mathrm{RMSE}(-X_{(1)})=\mathrm{RMSE}(X_{(n)}).
+    \]
+    То есть оценки $\hat\theta_{\max}$ и $\hat\theta_{\min}$ одинаково ``эффективны'' в смысле сравнения по MSE/RMSE.
+
+    \paragraph{Распишем MSE явно.}
+    Положим $U_i=\dfrac{X_i+\theta}{2\theta}\sim \mathrm{Unif}(0,1)$, тогда
+    \[
+        X_{(n)}=-\theta+2\theta\,U_{(n)},\qquad U_{(n)}\sim \mathrm{Beta}(n,1).
+    \]
+    Знаем
+    \[
+        \mathbb{E}U_{(n)}=\frac{n}{n+1},\qquad
+        \mathrm{Var}(U_{(n)})=\frac{n}{(n+1)^2(n+2)}.
+    \]
+    Отсюда
+    \[
+        \mathbb{E}X_{(n)}=-\theta+2\theta\frac{n}{n+1}=\theta\frac{n-1}{n+1},
+        \qquad
+        \mathrm{Var}(X_{(n)})=4\theta^2\frac{n}{(n+1)^2(n+2)}.
+    \]
+    Смещение как оценки $\theta$:
+    \[
+        \mathrm{Bias}(X_{(n)})=\mathbb{E}X_{(n)}-\theta=-\frac{2\theta}{n+1}.
+    \]
+    Тогда
+    \begin{align*}
+        \mathrm{MSE}(X_{(n)})
+        &=\mathrm{Var}(X_{(n)})+\mathrm{Bias}(X_{(n)})^2 \\
+        &=4\theta^2\frac{n}{(n+1)^2(n+2)}+\left(\frac{2\theta}{n+1}\right)^2
+        =\frac{8\theta^2}{(n+1)(n+2)}.
+    \end{align*}
+    А для $-X_{(1)}$ MSE совпадает по симметрии.
+
+    \subsection*{(b) $\overline{X}$ для $N(\theta,1)$ или $\overline{X^2}$ для $N(0,\theta)$}
+
+    \subsubsection*{1) $X_i\sim N(\theta,1)$, оценка $\overline{X}$}
+    Логарифм правдоподобия
+    \[
+        \ell(\theta)= -\frac12\sum_{i=1}^n (X_i-\theta)^2.
+    \]
+    \[
+        \ell'(\theta)=\sum_{i=1}^n (X_i-\theta).
+    \]
+    Информация Фишера:
+    \[
+        I_n(\theta)=\mathbb{E}_\theta\bigl[(\ell'(\theta))^2\bigr]
+        =\mathbb{E}_\theta\left[\left(\sum_{i=1}^n (X_i-\theta)\right)^2\right]
+        = n\cdot \mathrm{Var}(X_1)=n.
+    \]
+    Граница Крамера--Рао для несмещённых:
+    \[
+        \mathrm{Var}(\hat\theta)\ge \frac{1}{I_n(\theta)}=\frac{1}{n}.
+    \]
+    Для $\overline{X}$:
+    \[
+        \mathbb{E}\overline{X}=\theta,\qquad \mathrm{Var}(\overline{X})=\frac{1}{n},
+    \]
+    то есть $\overline{X}$ достигает границы Крамера--Рао и является эффективной оценкой $\theta$.
+
+    \subsubsection*{2) $X_i\sim N(0,\theta)$ (дисперсия равна $\theta$), оценка $\overline{X^2}$}
+    Плотность:
+    \[
+        f(x;\theta)=\frac{1}{\sqrt{2\pi\theta}}\exp\!\left(-\frac{x^2}{2\theta}\right),\qquad \theta>0.
+    \]
+    Лог-правдоподобие:
+    \[
+        \ell(\theta)= -\frac{n}{2}\ln\theta-\frac{1}{2\theta}\sum_{i=1}^n X_i^2 + C.
+    \]
+    \[
+        \ell'(\theta)= -\frac{n}{2\theta}+\frac{1}{2\theta^2}\sum_{i=1}^n X_i^2.
+    \]
+    \[
+        \ell''(\theta)=\frac{n}{2\theta^2}-\frac{1}{\theta^3}\sum_{i=1}^n X_i^2.
+    \]
+    Информация Фишера :
+    \[
+        I_n(\theta)=-\mathbb{E}\,\ell''(\theta)
+        =-\left(\frac{n}{2\theta^2}-\frac{1}{\theta^3}\mathbb{E}\sum_{i=1}^n X_i^2\right)
+        =-\left(\frac{n}{2\theta^2}-\frac{1}{\theta^3}\cdot n\theta\right)
+        =\frac{n}{2\theta^2}.
+    \]
+    Граница Крамера--Рао для несмещённых оценок $\theta$:
+    \[
+        \mathrm{Var}(\hat\theta)\ge \frac{1}{I_n(\theta)}=\frac{2\theta^2}{n}.
+    \]
+    Рассмотрим $\overline{X^2}=\frac1n\sum_{i=1}^n X_i^2$.
+    Так как $\mathbb{E}X_i^2=\theta$, то
+    \[
+        \mathbb{E}\overline{X^2}=\theta.
+    \]
+    Кроме того, для нормального распределения
+    \[
+        \mathrm{Var}(X_i^2)=2\theta^2,
+    \]
+    поэтому
+    \[
+        \mathrm{Var}(\overline{X^2})=\frac{1}{n}\mathrm{Var}(X_1^2)=\frac{2\theta^2}{n}.
+    \]
+    То есть $\overline{X^2}$ достигает границы Крамера--Рао и является эффективной оценкой $\theta$ в модели $N(0,\theta)$.
+
+
+    \section*{Вывод}
+    \begin{itemize}
+        \item В модели $\mathrm{Unif}[-\theta,\theta]$ оценки $X_{(n)}$ и $-X_{(1)}$ имеют одинаковые распределения, значит одинаковые MSE/RMSE (одинаковая ``эффективность'').
+        \item В модели $N(\theta,1)$ оценка $\overline{X}$ эффективна (достигает К--Р).
+        \item В модели $N(0,\theta)$ оценка $\overline{X^2}$ эффективна (достигает К--Р).
+    \end{itemize}
+
+
+    \section*{Задача 3}
+
+    Пусть $X_1,\dots,X_n$ - н.и.о.р с плотностью
+    \[
+        f(x;a)=
+        \begin{cases}
+            a\,e^{-a(x-3)}, & x\ge 3,\\
+            0, & x<3,
+        \end{cases}
+        \qquad a>0,\ n\ge 2.
+    \]
+    Это сдвинутое экспоненциальное распределение: $X=3+Y$, где $Y\sim \mathrm{Exp}(a)$.
+
+    \subsection*{1) Информация Фишера}
+
+    Логарифм правдоподобия по выборке:
+    \[
+        \ell(a)=\sum_{i=1}^n \ln f(X_i;a)
+        = n\ln a - a\sum_{i=1}^n (X_i-3),
+    \]
+    (индикатор $X_i\ge 3$ не зависит от $a$ и опускается, т.к. поддержка не зависит от параметра).
+
+    \[
+        \ell'(a)=\frac{n}{a}-\sum_{i=1}^n (X_i-3),
+        \qquad
+        \ell''(a)=-\frac{n}{a^2}.
+    \]
+    Тогда информация Фишера:
+    \[
+        I_n(a)=-\mathbb E\,\ell''(a)=\frac{n}{a^2}.
+    \]
+    (Эквивалентно, $I_n(a)=\mathrm{Var}(\ell'(a))=\mathrm{Var}(\sum (X_i-3))=n\cdot \frac{1}{a^2}$.)
+
+    \subsection*{2) Проверка R-эффективности оценок}
+
+    \subsubsection*{Граница Крамера--Рао для несмещённых оценок $a$}
+    Если $\hat a$ - несмещённая оценка $a$ (то есть $\mathbb E_a \hat a=a$), то
+    \[
+        \mathrm{Var}_a(\hat a)\ \ge\ \frac{1}{I_n(a)}=\frac{a^2}{n}.
+    \]
+    Оценка называется R-эффективной, если достигается равенство.
+
+    \subsubsection*{(a) Оценка ММП}
+
+    Обозначим
+    \[
+        S:=\sum_{i=1}^n (X_i-3).
+    \]
+    Тогда
+    \[
+        \ell(a)=n\ln a-aS,\qquad
+        \ell'(a)=\frac{n}{a}-S.
+    \]
+    Из уравнения $\ell'(a)=0$ получаем ММП:
+    \[
+        \hat a_{\text{MLE}}=\frac{n}{S}=\frac{1}{\overline{X}-3}.
+    \]
+
+    \paragraph{R-эффективность}
+    Покажем, что $\hat a_{\text{MLE}}$ смещённая.
+
+    Так как $Y_i=X_i-3\sim \mathrm{Exp}(a)$, то
+    \[
+        S=\sum_{i=1}^n Y_i \sim \mathrm{Gamma}(n,\text{rate}=a),
+    \]
+    и для $n>1$ известно
+    \[
+        \mathbb E\!\left[\frac{1}{S}\right]=\frac{a}{n-1}.
+    \]
+    Следовательно,
+    \[
+        \mathbb E(\hat a_{\text{MLE}})=\mathbb E\!\left[\frac{n}{S}\right]
+        = n\cdot \frac{a}{n-1}=\frac{n}{n-1}a\ne a.
+    \]
+    Значит, $\hat a_{\text{MLE}}$ смещённая, а потому не является R-эффективной.
+
+    \medskip
+
+    \subsubsection*{(b) Метод моментов}
+
+    \paragraph{(b1) Метод моментов для $g(x)=e^{-x}$.}
+
+    Вычислим момент:
+    \[
+        \mathbb E(e^{-X})=\mathbb E(e^{-(3+Y)})=e^{-3}\,\mathbb E(e^{-Y})
+        =e^{-3}\cdot \frac{a}{a+1},
+    \]
+    так как для $Y\sim\mathrm{Exp}(a)$ верно $\mathbb E(e^{-tY})=\frac{a}{a+t}$ при $t> -a$.
+
+    Обозначим выборочный момент
+    \[
+        \overline{g}=\frac{1}{n}\sum_{i=1}^n e^{-X_i}.
+    \]
+    Уравнение моментов:
+    \[
+        \overline{g}=e^{-3}\frac{a}{a+1}.
+    \]
+    Положим $M:=e^{3}\overline{g}$, тогда $M=\frac{a}{a+1}$ и
+    \[
+        \hat a_{e^{-x}}=\frac{M}{1-M}
+        =\frac{e^{3}\overline{g}}{1-e^{3}\overline{g}}.
+    \]
+
+    \paragraph{R-эффективность}
+    Эта оценка является нелинейной функцией $\overline{g}$ и смещённой оценкой $a$, а значит не может быть R-эффективной.
+
+    \paragraph{(b2) Метод моментов для $g(x)=x^2$.}
+
+    Найдём $\mathbb E(X^2)$:
+    \[
+        \mathbb E(X^2)=\mathbb E\bigl((3+Y)^2\bigr)=9+6\mathbb E(Y)+\mathbb E(Y^2).
+    \]
+    Для $Y\sim\mathrm{Exp}(a)$:
+    \[
+        \mathbb E(Y)=\frac{1}{a},\qquad \mathbb E(Y^2)=\frac{2}{a^2}.
+    \]
+    Значит
+    \[
+        \mathbb E(X^2)=9+\frac{6}{a}+\frac{2}{a^2}.
+    \]
+    Положим $\overline{X^2}=\frac1n\sum X_i^2$ и $m:=\overline{X^2}-9$. Тогда уравнение моментов:
+    \[
+        m=\frac{6}{a}+\frac{2}{a^2}=\frac{6a+2}{a^2}.
+    \]
+    Перепишем как квадратное уравнение относительно $a$:
+    \[
+        m a^2-6a-2=0.
+    \]
+    Берём положительный корень:
+    \[
+        \hat a_{x^2}=\frac{6+\sqrt{36+8m}}{2m},
+        \qquad m=\overline{X^2}-9.
+    \]
+
+    \paragraph{R-эффективность}
+    Оценка $\hat a_{x^2}$ является нелинейной функцией $\overline{X^2}$ и обычно смещённой оценкой $a$,
+    поэтому не является R-эффективной в смысле определения через равенство в неравенстве Крамера--Рао.
+
+    \subsection*{Итог}
+    \begin{itemize}
+        \item Информация Фишера: $\displaystyle I_n(a)=\frac{n}{a^2}$.
+        \item ММП: $\displaystyle \hat a_{\text{MLE}}=\frac{n}{\sum_{i=1}^n (X_i-3)}$ - смещённая, не R-эффективна.
+        \item ММП по $g(x)=e^{-x}$:
+        \[
+            \displaystyle \hat a_{e^{-x}}=\frac{e^{3}\cdot \frac1n\sum e^{-X_i}}{1-e^{3}\cdot \frac1n\sum e^{-X_i}}
+        \]
+        не R-эффективна.
+        \item ММП по $g(x)=x^2$:
+        \[
+            \displaystyle \hat a_{x^2}=\frac{6+\sqrt{36+8(\overline{X^2}-9)}}{2(\overline{X^2}-9)}
+        \]
+        - не R-эффективна.
+    \end{itemize}
+
+
+    \section*{Задача 4}
+
+    ``уровень значимости $\alpha$'' = доверительная вероятность $1-\alpha$.
+
+    \subsection*{I. $X_1,\dots,X_n\sim \mathrm{Unif}[0,\theta]$. Точные ДИ по $X_{(n)}$}
+
+    Пусть $M:=X_{(n)}=\max\{X_1,\dots,X_n\}$.
+    Для $\mathrm{Unif}[0,\theta]$ известно:
+    \[
+        \mathbb P_\theta(M\le x)=\left(\frac{x}{\theta}\right)^n,\qquad 0\le x\le \theta.
+    \]
+    Следовательно, центральная статистика(распределение не зависит от неизвестного параметра)
+    \[
+        W:=\frac{M}{\theta}\in[0,1]
+    \]
+    имеет распределение, не зависящее от $\theta$, с функцией распределения
+    \[
+        F_W(w)=\mathbb P(W\le w)=w^n,\qquad 0\le w\le 1.
+    \]
+
+    \subsubsection*{1) Точный односторонний ДИ по $M$}
+
+    Возьмём событие $\{W\ge \alpha^{1/n}\}$, у которого вероятность
+    \[
+        \mathbb P(W\ge \alpha^{1/n}) = 1-\mathbb P(W<\alpha^{1/n})=1-(\alpha^{1/n})^n=1-\alpha.
+    \]
+    Неравенство $W\ge \alpha^{1/n}$ эквивалентно
+    \[
+        \frac{M}{\theta}\ge \alpha^{1/n}\quad \Longleftrightarrow\quad \theta\le \frac{M}{\alpha^{1/n}}.
+    \]
+    Также всегда верно $\theta\ge M$ (так как $M\le \theta$ почти наверное).
+    Поэтому интервал
+    \[
+        I_1(M)=\left[\,M,\ \frac{M}{\alpha^{1/n}}\,\right]
+    \]
+    является точным доверительным интервалом уровня $1-\alpha$:
+    \[
+        \mathbb P_\theta\bigl(\theta\in I_1(M)\bigr)=1-\alpha.
+    \]
+
+    \subsubsection*{2) Точный двусторонний ДИ по $M$}
+
+    Выберем квантили так, чтобы
+    \[
+        \mathbb P\!\left( a\le W\le b\right)=1-\alpha.
+    \]
+    Положим (равные хвосты)
+    \[
+        a=\left(\frac{\alpha}{2}\right)^{1/n},\qquad b=\left(1-\frac{\alpha}{2}\right)^{1/n}.
+    \]
+    Тогда
+    \[
+        \mathbb P(a\le W\le b)=F_W(b)-F_W(a)=b^n-a^n=\left(1-\frac{\alpha}{2}\right)-\frac{\alpha}{2}=1-\alpha.
+    \]
+    Неравенство $a\le M/\theta\le b$ эквивалентно
+    \[
+        \frac{M}{b}\le \theta \le \frac{M}{a}.
+    \]
+    Следовательно,
+    \[
+        I_2(M)=\left[\,\frac{M}{\left(1-\frac{\alpha}{2}\right)^{1/n}},\ \frac{M}{\left(\frac{\alpha}{2}\right)^{1/n}}\,\right]
+    \]
+    --- точный доверительный интервал уровня $1-\alpha$.
+
+    \subsection*{II. Точные ДИ по $X_{(1)}$}
+
+    \subsubsection*{II(a) $X_1,\dots,X_n\sim \mathrm{Unif}[\theta,\theta+1]$}
+
+    Пусть $m:=X_{(1)}=\min\{X_1,\dots,X_n\}$.
+    Сделаем сдвиг: $Y_i=X_i-\theta\sim \mathrm{Unif}[0,1]$.
+    Тогда $m-\theta = Y_{(1)}$ и для $0\le u\le 1$
+    \[
+        \mathbb P(Y_{(1)}>u)=\mathbb P(Y_1>u,\dots,Y_n>u)=(1-u)^n,
+    \]
+    то есть
+    \[
+        F_{Y_{(1)}}(u)=\mathbb P(Y_{(1)}\le u)=1-(1-u)^n.
+    \]
+    центральная статистика $U:=m-\theta$ имеет распределение, не зависящее от $\theta$.
+
+    Возьмём одностороннее событие $\{U\le c\}$ с вероятностью $1-\alpha$:
+    \[
+        \mathbb P(U\le c)=1-\alpha
+        \quad\Longleftrightarrow\quad
+        1-(1-c)^n=1-\alpha
+        \quad\Longleftrightarrow\quad
+        c=1-\alpha^{1/n}.
+    \]
+    Событие $U\le c$ эквивалентно $m-\theta\le c$, то есть $\theta\ge m-c$.
+    Также всегда $\theta\le m$ (поскольку $m\ge \theta$).
+    Следовательно,
+    \[
+        I_{a}(m)=\left[\,m-(1-\alpha^{1/n}),\ m\,\right]
+    \]
+    --- точный доверительный интервал уровня $1-\alpha$ для $\theta$.
+
+    \subsubsection*{II(b) $X_1,\dots,X_n\sim \mathrm{Unif}[\theta,2\theta]$, $\theta>0$}
+
+    Пусть $m:=X_{(1)}$.
+    Сделаем масштабирование: $Z_i=X_i/\theta\sim \mathrm{Unif}[1,2]$.
+    Тогда
+    \[
+        V:=\frac{m}{\theta}=Z_{(1)}.
+    \]
+    Для $1\le v\le 2$:
+    \[
+        \mathbb P(V>v)=\mathbb P(Z_1>v,\dots,Z_n>v)=(2-v)^n,
+    \]
+    то есть
+    \[
+        F_V(v)=\mathbb P(V\le v)=1-(2-v)^n.
+    \]
+    $V=m/\theta$ не зависит от $\theta$.
+
+    Построим односторонний интервал вероятности $1-\alpha$ вида $\{V\ge a\}$:
+    \[
+        \mathbb P(V\ge a)=1-\alpha
+        \quad\Longleftrightarrow\quad
+        (2-a)^n=1-\alpha
+        \quad\Longleftrightarrow\quad
+        a=2-(1-\alpha)^{1/n}.
+    \]
+    Событие $V\ge a$ эквивалентно $m/\theta\ge a$, то есть $\theta\le m/a$.
+    Также всегда $V\le 2$, т.е. $m/\theta\le 2$ и значит $\theta\ge m/2$.
+    Следовательно,
+    \[
+        I_{b}(m)=\left[\,\frac{m}{2},\ \frac{m}{\,2-(1-\alpha)^{1/n}}\,\right]
+    \]
+    --- точный доверительный интервал уровня $1-\alpha$ для $\theta$.
+
+
+    \section*{Задача 5. Доверительные интервалы для дисперсии нормального распределения при известном матожидании}
+
+    Пусть $X_1,\dots,X_n \stackrel{iid}{\sim}\mathcal N(0,\theta)$, где $\theta=\sigma^2>0$ - дисперсия (матожидание известно и равно $0$).
+    Обозначим
+    \[
+        S=\sum_{k=1}^n X_k^2,\qquad \overline{X^2}=\frac{1}{n}\sum_{k=1}^n X_k^2=\frac{S}{n}.
+    \]
+
+    \subsection*{(a) Точный интервал через распределение $\chi^2$}
+
+    Известно, что
+    \[
+        T:=\frac{S}{\theta}=\sum_{k=1}^n\left(\frac{X_k}{\sqrt{\theta}}\right)^2 \sim \chi^2_n.
+    \]
+    Пусть $q_p$ --- квантиль порядка $p$ распределения $\chi^2_n$:
+    \[
+        \mathbb P(\chi^2_n\le q_p)=p.
+    \]
+    Тогда
+    \[
+        \mathbb P\!\left(q_{\alpha/2}\le \frac{S}{\theta}\le q_{1-\alpha/2}\right)=1-\alpha.
+    \]
+    Инвертируя двойное неравенство (учитывая положительность величин), получаем
+    \[
+        \mathbb P\!\left(\frac{S}{q_{1-\alpha/2}}\le \theta \le \frac{S}{q_{\alpha/2}}\right)=1-\alpha.
+    \]
+    Следовательно, точный доверительный интервал уровня $1-\alpha$:
+    \[
+        I_{\chi^2}(S)=\left[\frac{S}{q_{1-\alpha/2}},\ \frac{S}{q_{\alpha/2}}\right]
+        =\left[\frac{\sum_{k=1}^n X_k^2}{\chi^2_{n,\,1-\alpha/2}},\ \frac{\sum_{k=1}^n X_k^2}{\chi^2_{n,\,\alpha/2}}\right].
+    \]
+    Это точный интервал, потому что вероятность покрытия вычисляется по точному распределению $\chi^2_n$.
+
+
+    \section*{Задача 6}
+
+    \subsection*{I. $X_1,\dots,X_n \sim \mathrm{Unif}[0,\theta]$}
+
+    \subsubsection*{(a) Асимптотический ДИ по $X_{(n)}$ (статистика $\frac{n(\theta-X_{(n)})}{\theta}$)}
+
+    Обозначим $M:=X_{(n)}=\max\{X_1,\dots,X_n\}$ и рассмотрим опорную статистику
+    \[
+        Z_n \;:=\; \frac{n(\theta-M)}{\theta}=n\Bigl(1-\frac{M}{\theta}\Bigr).
+    \]
+    Поскольку $M/\theta \stackrel{d}{=} U_{(n)}$ для $U_i\sim\mathrm{Unif}(0,1)$, имеем при $t\ge 0$:
+    \begin{align*}
+        \mathbb{P}(Z_n>t)
+        &=\mathbb{P}\!\left(1-\frac{M}{\theta}>\frac{t}{n}\right)
+        =\mathbb{P}\!\left(\frac{M}{\theta}<1-\frac{t}{n}\right)
+        =\left(1-\frac{t}{n}\right)^n
+        \;\xrightarrow[n\to\infty]{}\;e^{-t}.
+    \end{align*}
+    То есть
+    \[
+        Z_n \ \Rightarrow\ \mathrm{Exp}(1).
+    \]
+
+    Пусть $q_p$ — квантиль порядка $p$ распределения $\mathrm{Exp}(1)$, тогда
+    \[
+        q_p = -\ln(1-p).
+    \]
+    Возьмём двусторонний интервал по квантилям:
+    \[
+        \mathbb{P}\bigl(q_{\alpha/2}\le Z_n \le q_{1-\alpha/2}\bigr)\approx 1-\alpha,
+        \qquad
+        q_{\alpha/2}=-\ln\!\left(1-\frac{\alpha}{2}\right),\quad
+        q_{1-\alpha/2}=-\ln\!\left(\frac{\alpha}{2}\right).
+    \]
+    Неравенство $q_{\alpha/2}\le \frac{n(\theta-M)}{\theta}\le q_{1-\alpha/2}$ эквивалентно
+    \[
+        \frac{M}{1-q_{\alpha/2}/n}\ \le\ \theta\ \le\ \frac{M}{1-q_{1-\alpha/2}/n}.
+    \]
+    Следовательно, асимптотический доверительный интервал уровня $1-\alpha$:
+    \[
+        I_{M}(M)=\left[\,
+                     \frac{M}{1-\frac{1}{n}\ln\!\bigl(\frac{1}{1-\alpha/2}\bigr)}\;,\;
+                     \frac{M}{1-\frac{1}{n}\ln\!\bigl(\frac{2}{\alpha}\bigr)}
+                     \,\right]
+        =
+        \left[\,
+            \frac{M}{1-\frac{q_{\alpha/2}}{n}}\;,\;
+            \frac{M}{1-\frac{q_{1-\alpha/2}}{n}}
+            \,\right].
+    \]
+
+
+\end{document}

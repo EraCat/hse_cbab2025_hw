@@ -1,0 +1,519 @@
+
+\documentclass[12pt]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T2A]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage[russian]{babel}
+\else
+  \usepackage{fontspec}
+  \setmainfont{DejaVu Serif}
+  \usepackage[russian]{babel}
+\fi
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\section*{Задача 1}
+
+Исследуем  \emph{СКО} (RMSE):
+\[
+\mathrm{RMSE}(\hat\theta)=\sqrt{\mathbb{E}_\theta\bigl[(\hat\theta-\theta)^2\bigr]}
+=\sqrt{\mathrm{Var}_\theta(\hat\theta)+\bigl(\mathbb{E}_\theta\hat\theta-\theta\bigr)^2}.
+\]
+
+\subsection*{План моделирования}
+Фиксируем объём выборки $n$ и параметр $\theta$. Для каждой точки сетки по параметру $k$:
+\begin{enumerate}
+  \item многократно ($B$ раз) генерируем выборку нужного распределения;
+  \item считаем оценку $\hat\theta$;
+  \item считаем квадратичную ошибку $(\hat\theta-\theta)^2$;
+  \item усредняем по $B$ повторениям и берём корень: 
+  $\widehat{\mathrm{RMSE}}=\sqrt{\frac1B\sum_{b=1}^B(\hat\theta^{(b)}-\theta)^2}$.
+\end{enumerate}
+Далее строим график $\widehat{\mathrm{RMSE}}$ по $k$
+
+Для каждого значения $k$ проводим $B$ независимых «экспериментов»:
+\begin{enumerate}
+  \item генерируем выборку $X_1^{(b)},\dots,X_n^{(b)}$ из заданного распределения при фиксированном $\theta$;
+  \item по формуле из пункта задания вычисляем оценку $\hat\theta_k^{(b)}$;
+  \item считаем ошибку $e_b=\hat\theta_k^{(b)}-\theta$.
+\end{enumerate}
+
+Далее оцениваем СКО (RMSE) по $B$ повторам:
+\[
+\widehat{\mathrm{RMSE}}(k)
+=\sqrt{\frac{1}{B}\sum_{b=1}^B\bigl(\hat\theta_k^{(b)}-\theta\bigr)^2}
+=\sqrt{\frac{1}{B}\sum_{b=1}^B e_b^2 }.
+\]
+Затем строим график зависимости $k \mapsto \widehat{\mathrm{RMSE}}(k)$.
+
+\medskip
+\noindent\textbf{Выбор диапазонов $k$ в работе:}
+\[
+\text{(a)}\ k=2,3,\dots,50;\qquad
+\text{(b)}\ k=2,3,\dots,50;\qquad
+\text{(c)}\ k=2,3,\dots,20.
+\]
+(В (c) большие $k$ дают сильно нестабильные оценки, поэтому ограничиваем диапазон.)
+
+\subsection*{(a) $\mathrm{Unif}[0,\theta]$, оценка через квантиль $p=1/k$}
+
+Пусть $X_1,\dots,X_n\sim \mathrm{Unif}[0,\theta]$.
+В пункте (a) используется квантиль уровня $p=1/k$.
+В каждом повторе сортируем выборку и берём порядковую статистику
+\[
+\widehat q_{1/k} = X_{(m)}, \qquad m=\left\lceil \frac{n}{k}\right\rceil,
+\]
+после чего вычисляем оценку
+\[
+\hat\theta_k = k\,\widehat q_{1/k} = k\,X_{(m)}.
+\]
+Далее по формуле выше считаем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+\subsection*{(b) $\mathrm{Unif}[0,\theta]$, моментная оценка}
+
+Пусть $X_1,\dots,X_n\sim \mathrm{Unif}[0,\theta]$.
+Для каждого $k$ в каждом повторе считаем
+\[
+\overline{X^k}=\frac{1}{n}\sum_{i=1}^n (X_i)^k,
+\qquad
+\hat\theta_k=\sqrt[k]{(k+1)\,\overline{X^k}}.
+\]
+Затем вычисляем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+\subsection*{(c) $\mathrm{Exp}(\theta)$, моментная оценка}
+
+Пусть $X_1,\dots,X_n\sim \mathrm{Exp}(\theta)$, где $\theta$ --- параметр интенсивности
+в плотности $f(x)=\theta e^{-\theta x}$, $x\ge 0$.
+Для каждого $k$ в каждом повторе считаем
+\[
+\overline{X^k}=\frac{1}{n}\sum_{i=1}^n (X_i)^k,
+\qquad
+\hat\theta_k=\sqrt[k]{\frac{k!}{\overline{X^k}}}.
+\]
+После этого по $B$ повторам получаем $\widehat{\mathrm{RMSE}}(k)$ и строим график.
+
+\subsection*{Качественная интерпретация формы графиков}
+
+\begin{itemize}
+  \item \textbf{(a)} При росте $k$ берётся всё меньшая квантиль ($p=1/k$) и затем умножается на $k$,
+        поэтому шум усиливается, и $\widehat{\mathrm{RMSE}}(k)$ обычно растёт.
+  \item \textbf{(b)} Для равномерного распределения (ограниченного сверху $\theta$) высокие степени не приводят
+        к «взрыву» редких больших наблюдений, поэтому $\widehat{\mathrm{RMSE}}(k)$ часто убывает и выходит на плато.
+  \item \textbf{(c)} Для экспоненциального распределения из-за неограниченного хвоста величины $X^k$ при больших $k$
+        становятся крайне нестабильными, поэтому $\widehat{\mathrm{RMSE}}(k)$ быстро растёт с $k$.
+\end{itemize}
+
+\section*{Задача 2}
+
+\subsection*{(a) $X_{(1)}$ или $X_{(n)}$ для $\mathrm{Unif}[-\theta,\theta]$}
+Распределение симметрично относительно нуля. Для оценки $\theta$ естественно использовать либо
+$\hat\theta_1=-X_{(1)}$, либо $\hat\theta_2=X_{(n)}$. По симметрии
+\[
+-X_{(1)}\stackrel{d}{=}X_{(n)}\quad\Longrightarrow\quad
+\mathrm{MSE}(\hat\theta_1)=\mathrm{MSE}(\hat\theta_2).
+\]
+Значит, \emph{оценки одинаково эффективны} (имеют одинаковое СКО).
+
+\subsection*{(b) $\overline{X}$ для $\mathrm{Norm}(\theta,1)$ или $\overline{X^2}$ для $\mathrm{Norm}(0,\theta)$}
+\begin{itemize}
+\item Если $X_i\sim N(\theta,1)$, то $\overline{X}$ несмещённа и
+$\mathrm{Var}(\overline{X})=\frac{1}{n}$. Информация Фишера по $\theta$ на одно наблюдение равна 1,
+поэтому граница Рао--Крамера равна $1/n$ и $\overline{X}$ \emph{эффективна}.
+\item Если $X_i\sim N(0,\theta)$, то $\overline{X^2}$ несмещённа и
+$\mathrm{Var}(X^2)=2\theta^2$, значит $\mathrm{Var}(\overline{X^2})=\frac{2\theta^2}{n}$.
+Информация Фишера по параметру дисперсии $\theta$ равна $I_n(\theta)=\frac{n}{2\theta^2}$,
+граница Рао--Крамера: $1/I_n(\theta)=\frac{2\theta^2}{n}$, то есть $\overline{X^2}$ также \emph{эффективна}.
+\end{itemize}
+Итого: \emph{в каждой своей модели обе указанные оценки являются эффективными}.
+
+\section*{Задача 3}
+
+Дана плотность
+\[
+f(x,a)=
+\begin{cases}
+a e^{-a(x-3)}, & x\ge 3,\\
+0, & x<3,
+\end{cases}
+\qquad a>0.
+\]
+Положим $Y=X-3\sim\mathrm{Exp}(a)$.
+
+\subsection*{Информация Фишера}
+Лог-правдоподобие для одного наблюдения ($x\ge3$):
+\[
+\ell(a;x)=\ln a-a(x-3).
+\]
+Тогда
+\[
+\frac{\partial \ell}{\partial a}=\frac1a-(x-3),\qquad
+\frac{\partial^2 \ell}{\partial a^2}=-\frac{1}{a^2}.
+\]
+Следовательно,
+\[
+I_1(a)=-\mathbb{E}\frac{\partial^2 \ell}{\partial a^2}=\frac{1}{a^2},\qquad
+I_n(a)=\frac{n}{a^2}.
+\]
+Граница Рао--Крамера (для несмещённых): $\mathrm{Var}(\hat a)\ge \frac{1}{I_n(a)}=\frac{a^2}{n}$.
+
+\subsection*{(a) ММП}
+Лог-правдоподобие выборки:
+\[
+\ell_n(a)=n\ln a-a\sum_{i=1}^n (x_i-3).
+\]
+Условие максимума $\ell_n'(a)=0$ даёт
+\[
+\hat a_{\mathrm{MLE}}=\frac{n}{\sum_{i=1}^n (x_i-3)}=\frac{1}{\overline{X}-3}.
+\]
+Из общих свойств ММП для регулярных моделей:
+\[
+\sqrt{n}\,(\hat a_{\mathrm{MLE}}-a)\ \xrightarrow{d}\ N\Bigl(0,\ \frac{1}{I_1(a)}\Bigr)=N(0,a^2),
+\]
+то есть $\mathrm{AsyVar}(\hat a_{\mathrm{MLE}})=\frac{a^2}{n}=1/I_n(a)$.
+Следовательно, \emph{$\hat a_{\mathrm{MLE}}$ является $R$-эффективной}.
+
+\subsection*{(b) Метод моментов}
+
+\paragraph{1) Для $g(x)=e^{-x}$.}
+\[
+\mathbb{E}[e^{-X}]=e^{-3}\,\mathbb{E}[e^{-Y}]=e^{-3}\frac{a}{a+1}.
+\]
+Пусть $\overline{g}=\frac1n\sum_{i=1}^n e^{-X_i}$. Уравнение моментов:
+\[
+e^{-3}\frac{a}{a+1}=\overline{g}\quad\Longleftrightarrow\quad
+\frac{a}{a+1}=e^3\overline{g}=:T.
+\]
+Отсюда моментная оценка:
+\[
+\hat a_{1}=\frac{T}{1-T}=\frac{e^3\overline{g}}{1-e^3\overline{g}}.
+\]
+Найдём асимптотическую дисперсию.
+Имеем $U=e^{-X}=e^{-3}e^{-Y}$, где $Y\sim\mathrm{Exp}(a)$, поэтому
+\[
+\mathbb{E}U=e^{-3}\frac{a}{a+1},\qquad
+\mathbb{E}U^2=e^{-6}\frac{a}{a+2},
+\]
+\[
+\mathrm{Var}(U)=e^{-6}\Bigl(\frac{a}{a+2}-\frac{a^2}{(a+1)^2}\Bigr).
+\]
+Так как $T=e^3\overline{U}$, то
+\[
+\mathrm{Var}(T)=e^6\mathrm{Var}(\overline{U})
+=\frac{1}{n}\Bigl(\frac{a}{a+2}-\frac{a^2}{(a+1)^2}\Bigr).
+\]
+Функция $h(t)=\frac{t}{1-t}$ имеет производную $h'(t)=\frac{1}{(1-t)^2}$,
+а при $t_0=\frac{a}{a+1}$ получаем $h'(t_0)=(a+1)^2$.
+По дельта-методу:
+\[
+\mathrm{AsyVar}(\hat a_1)= (h'(t_0))^2\,\mathrm{Var}(T)
+=\frac{(a+1)^4}{n}\Bigl(\frac{a}{a+2}-\frac{a^2}{(a+1)^2}\Bigr)
+=\frac{a(a+1)^2}{n(a+2)}.
+\]
+Сравним с $1/I_n(a)=a^2/n$:
+\[
+\frac{\mathrm{AsyVar}(\hat a_1)}{a^2/n}
+=\frac{(a+1)^2}{a(a+2)}>1.
+\]
+Значит, \emph{$\hat a_1$ не является $R$-эффективной}.
+
+\paragraph{2) Для $g(x)=x^2$.}
+\[
+\mathbb{E}[X^2]=\mathbb{E}[(3+Y)^2]=9+6\mathbb{E}Y+\mathbb{E}Y^2
+=9+\frac{6}{a}+\frac{2}{a^2}.
+\]
+Пусть $S_2=\overline{X^2}=\frac1n\sum X_i^2$. Уравнение моментов:
+\[
+S_2=9+\frac{6}{a}+\frac{2}{a^2}.
+\]
+Обозначив $t=\frac1a$, получаем квадратное уравнение
+$2t^2+6t+(9-S_2)=0$ и (берём положительный корень) 
+\[
+\hat a_2=\left(\frac{-6+\sqrt{8S_2-36}}{4}\right)^{-1}.
+\]
+Для асимптотической дисперсии используем дельта-метод в неявном виде.
+Пусть $m(a)=\mathbb{E}[X^2]=9+\frac{6}{a}+\frac{2}{a^2}$, тогда $m' (a)= -\frac{6}{a^2}-\frac{4}{a^3}$.
+Кроме того, для $Y\sim\mathrm{Exp}(a)$ имеем $\mathbb{E}Y^r=\frac{r!}{a^r}$, откуда
+\[
+\mathbb{E}[X^4]=\mathbb{E}[(3+Y)^4]
+=81+\frac{108}{a}+\frac{108}{a^2}+\frac{72}{a^3}+\frac{24}{a^4}.
+\]
+Тогда
+\[
+\mathrm{Var}(X^2)=\mathbb{E}[X^4]-\bigl(\mathbb{E}[X^2]\bigr)^2
+=\frac{36}{a^2}+\frac{48}{a^3}+\frac{20}{a^4}.
+\]
+По ЦПТ и дельта-методу:
+\[
+\mathrm{AsyVar}(\hat a_2)=\frac{\mathrm{Var}(X^2)}{n\,(m'(a))^2}
+=\frac{a^2}{n}\cdot\frac{9a^2+12a+5}{9a^2+12a+4}.
+\]
+Так как $\frac{9a^2+12a+5}{9a^2+12a+4}>1$, то \emph{$\hat a_2$ также не $R$-эффективна}.
+
+\section*{Задача 4}
+
+\subsection*{I. $\mathrm{Unif}[0,\theta]$, статистика $X_{(n)}$}
+
+Пусть $X_1,\dots,X_n\sim\mathrm{Unif}[0,\theta]$, $X_{(n)}=\max X_i$.
+Тогда для $0\le x\le\theta$:
+\[
+\mathbb{P}(X_{(n)}\le x)=\left(\frac{x}{\theta}\right)^n.
+\]
+Эквивалентно, $U=X_{(n)}/\theta$ имеет CDF $F_U(u)=u^n$, $u\in[0,1]$.
+
+\paragraph{1) Односторонний точный ДИ уровня значимости $\alpha$ (доверие $1-\alpha$).}
+Ищем $c$ из
+\[
+\mathbb{P}\{\theta\le cX_{(n)}\}=1-\alpha.
+\]
+Имеем
+\[
+\mathbb{P}\{\theta\le cX_{(n)}\}
+=\mathbb{P}\left\{X_{(n)}\ge \frac{\theta}{c}\right\}
+=1-\left(\frac{1}{c}\right)^n.
+\]
+Отсюда $c=\alpha^{-1/n}$ и
+\[
+I_1:\quad \theta\in\bigl[X_{(n)},\ \alpha^{-1/n}X_{(n)}\bigr]\quad\text{с вероятностью }1-\alpha.
+\]
+
+\paragraph{2) Двусторонний точный ДИ уровня значимости $\alpha$.}
+Пусть
+\[
+\mathbb{P}\Bigl\{u_1\le \frac{X_{(n)}}{\theta}\le u_2\Bigr\}=1-\alpha,
+\qquad 
+\mathbb{P}\Bigl\{\frac{X_{(n)}}{\theta}<u_1\Bigr\}=\frac{\alpha}{2},
+\quad 
+\mathbb{P}\Bigl\{\frac{X_{(n)}}{\theta}>u_2\Bigr\}=\frac{\alpha}{2}.
+\]
+Так как $F_U(u)=u^n$, получаем
+\[
+u_1=\left(\frac{\alpha}{2}\right)^{1/n},\qquad
+u_2=\left(1-\frac{\alpha}{2}\right)^{1/n}.
+\]
+Неравенство $u_1\le X_{(n)}/\theta\le u_2$ эквивалентно
+\[
+\frac{X_{(n)}}{u_2}\le \theta \le \frac{X_{(n)}}{u_1}.
+\]
+Следовательно,
+\[
+I_2:\quad 
+\theta\in\left[\frac{X_{(n)}}{(1-\alpha/2)^{1/n}},\ \frac{X_{(n)}}{(\alpha/2)^{1/n}}\right]
+\quad\text{с вероятностью }1-\alpha.
+\]
+
+\paragraph{(*) Длина интервалов и асимптотика.}
+Длины:
+\[
+|I_1|=X_{(n)}\bigl(\alpha^{-1/n}-1\bigr),\qquad
+|I_2|=X_{(n)}\left((\alpha/2)^{-1/n}-(1-\alpha/2)^{-1/n}\right).
+\]
+Так как $\mathbb{E}X_{(n)}=\frac{n}{n+1}\theta$ и при $n\to\infty$ $a^{-1/n}=e^{-\ln(a)/n}=1-\frac{\ln a}{n}+o(1/n)$,
+то
+\[
+\mathbb{E}|I_1|\sim \theta\cdot\frac{-\ln\alpha}{n},\qquad
+\mathbb{E}|I_2|\sim \theta\cdot\frac{-\ln(\alpha/2)+\ln(1-\alpha/2)}{n}.
+\]
+Оба интервала \emph{сужаются как $O(1/n)$}, причём $I_1$ короче (у $I_2$ дополнительно появляется вклад $\ln 2$).
+
+\subsection*{II. Точные ДИ по $X_{(1)}$}
+
+\paragraph{(a) $X_i\sim\mathrm{Unif}[\theta,\theta+1]$.}
+Пусть $Y_i=X_i-\theta\sim\mathrm{Unif}[0,1]$. Тогда $Y_{(1)}=\min Y_i$ и
+\[
+\mathbb{P}(Y_{(1)}>y)=(1-y)^n,\quad y\in[0,1].
+\]
+Выберем $c$ из $\mathbb{P}(Y_{(1)}\le c)=1-\alpha$:
+\[
+1-(1-c)^n=1-\alpha \quad\Rightarrow\quad c=1-\alpha^{1/n}.
+\]
+Так как $Y_{(1)}=X_{(1)}-\theta$, получаем точный интервал:
+\[
+\theta\in\Bigl[X_{(1)}-(1-\alpha^{1/n}),\ X_{(1)}\Bigr]\quad\text{с вероятностью }1-\alpha.
+\]
+
+\paragraph{(b) $X_i\sim\mathrm{Unif}[\theta,2\theta]$.}
+Положим $W_i=X_i/\theta\sim\mathrm{Unif}[1,2]$. Тогда $W_{(1)}=X_{(1)}/\theta$ и
+\[
+\mathbb{P}(W_{(1)}>w)=(2-w)^n,\quad w\in[1,2].
+\]
+Выбираем $c$ из $\mathbb{P}(W_{(1)}\le c)=1-\alpha$:
+\[
+1-(2-c)^n=1-\alpha\quad\Rightarrow\quad c=2-\alpha^{1/n}.
+\]
+Неравенство $W_{(1)}\le c$ эквивалентно $\theta\ge X_{(1)}/c$. Также всегда $\theta\le X_{(1)}$.
+Итак,
+\[
+\theta\in\Bigl[\frac{X_{(1)}}{2-\alpha^{1/n}},\ X_{(1)}\Bigr]\quad\text{с вероятностью }1-\alpha.
+\]
+
+\section*{Задача 5}
+
+Пусть $X_1,\dots,X_n\sim N(0,\theta)$, где $\theta>0$ --- дисперсия (мат. ожидание известно и равно 0).
+Пусть уровень доверия равен $\gamma\in(0,1)$ (в терминах значимости $\alpha$: $\gamma=1-\alpha$).
+
+\subsection*{(a) Интервал по статистике $\overline{X^2}$ (эквивалентно $\sum X_i^2$)}
+Известно, что
+\[
+\frac{\sum_{k=1}^n X_k^2}{\theta}\sim \chi^2_n.
+\]
+Пусть $\lambda_p$ --- квантиль порядка $p$ распределения $\chi^2_n$.
+Тогда
+\[
+\mathbb{P}\left\{\lambda_{(1-\gamma)/2}\le \frac{\sum X_k^2}{\theta}\le \lambda_{(1+\gamma)/2}\right\}=\gamma.
+\]
+Инвертируя неравенство по $\theta$, получаем точный ДИ:
+\[
+\theta\in\left(\frac{\sum_{k=1}^n X_k^2}{\lambda_{(1+\gamma)/2}},\ 
+\frac{\sum_{k=1}^n X_k^2}{\lambda_{(1-\gamma)/2}}\right)
+\quad\text{с вероятностью } \gamma,
+\]
+что совпадает с формулой из условия.
+
+\emph{Длина при росте $n$.}
+Длина равна
+\[
+L_a=\sum X_k^2\left(\frac{1}{\lambda_{(1-\gamma)/2}}-\frac{1}{\lambda_{(1+\gamma)/2}}\right).
+\]
+При $n\to\infty$ квантили $\chi^2_n$ удовлетворяют
+$\lambda_p=n+z_p\sqrt{2n}+o(\sqrt{n})$, поэтому $L_a=O_\mathbb{P}(\theta/\sqrt{n})$,
+то есть интервал \emph{сужается как $1/\sqrt{n}$}.
+
+\subsection*{(b) Интервал по статистике $\overline{X}^{\,2}$}
+Так как $\overline{X}\sim N\!\left(0,\frac{\theta}{n}\right)$, то
+\[
+\frac{\sqrt{n}\,\overline{X}}{\sqrt{\theta}}\sim N(0,1)
+\quad\Rightarrow\quad
+\frac{n\overline{X}^{\,2}}{\theta}\sim \chi^2_1.
+\]
+Для $\chi^2_1$ квантиль можно выразить через нормальные квантили:
+если $Z\sim N(0,1)$, то $Z^2\sim \chi^2_1$ и
+\[
+\chi^2_{1,p}=z^2_{(p+1)/2}.
+\]
+Поэтому
+\[
+\chi^2_{1,(1+\gamma)/2}=z^2_{(3+\gamma)/4},\qquad
+\chi^2_{1,(1-\gamma)/2}=z^2_{(3-\gamma)/4}.
+\]
+Отсюда точный ДИ:
+\[
+\theta\in\left(\frac{n\overline{X}^{\,2}}{z^2_{(3+\gamma)/4}},\ 
+\frac{n\overline{X}^{\,2}}{z^2_{(3-\gamma)/4}}\right)
+\quad\text{с вероятностью }\gamma,
+\]
+что совпадает с формулой из условия.
+
+\emph{Длина при росте $n$.}
+Так как $\frac{n\overline{X}^{\,2}}{\theta}\sim\chi^2_1$ и распределение не зависит от $n$,
+то $n\overline{X}^{\,2}$ имеет типичный порядок $\theta$ \emph{для любого $n$}.
+Следовательно, длина $L_b$ \emph{не стремится к нулю при $n\to\infty$} (остаётся порядка $\theta$):
+интервал использует лишь одну степень свободы (среднее), поэтому крайне неэффективен
+для оценивания дисперсии по сравнению с пунктом (a).
+
+\section*{Задача 6}
+
+\subsection*{I. $\mathrm{Unif}[0,\theta]$}
+
+\paragraph{(a) Асимптотический ДИ по $X_{(n)}$.}
+Известно предельное распределение:
+\[
+V_n:=\frac{n(\theta-X_{(n)})}{\theta}\ \xrightarrow{d}\ \mathrm{Exp}(1),
+\qquad
+\mathbb{P}(\mathrm{Exp}(1)\le t)=1-e^{-t}.
+\]
+Пусть $q_p=-\ln(1-p)$ --- квантиль порядка $p$ распределения $\mathrm{Exp}(1)$.
+Тогда для двустороннего уровня $1-\alpha$:
+\[
+\mathbb{P}\{q_{\alpha/2}\le V_n\le q_{1-\alpha/2}\}\approx 1-\alpha.
+\]
+Имеем $q_{\alpha/2}=-\ln(1-\alpha/2)$, $q_{1-\alpha/2}=-\ln(\alpha/2)$.
+Неравенство $q_1\le V_n\le q_2$ эквивалентно
+\[
+q_1\le n\Bigl(1-\frac{X_{(n)}}{\theta}\Bigr)\le q_2
+\quad\Longleftrightarrow\quad
+1-\frac{q_2}{n}\le \frac{X_{(n)}}{\theta}\le 1-\frac{q_1}{n}.
+\]
+Инвертируя, получаем асимптотический ДИ:
+\[
+\theta\in\left[\frac{X_{(n)}}{1-q_1/n},\ \frac{X_{(n)}}{1-q_2/n}\right]
+\quad\text{(приблизительно с вероятностью }1-\alpha),
+\]
+где $q_1=-\ln(1-\alpha/2)$, $q_2=-\ln(\alpha/2)$.
+(При практическом использовании требуется $n>q_2$.)
+
+\paragraph{(b) Асимптотические нормальные оценки $\hat\theta_1=2\overline{X}$ и $\hat\theta_2=\sqrt{3\,\overline{X^2}}$.}
+Для $\mathrm{Unif}[0,\theta]$:
+\[
+\mathbb{E}X=\frac{\theta}{2},\quad \mathrm{Var}(X)=\frac{\theta^2}{12}
+\ \Rightarrow\ 
+\mathrm{Var}(\hat\theta_1)=4\frac{\theta^2}{12n}=\frac{\theta^2}{3n}.
+\]
+Значит,
+\[
+\hat\theta_1 \approx N\!\left(\theta,\frac{\theta^2}{3n}\right).
+\]
+А также $\mathbb{E}X^2=\theta^2/3$, $\mathrm{Var}(X^2)=\theta^4\left(\frac15-\frac19\right)=\frac{4\theta^4}{45}$.
+По дельта-методу для $g(m)=\sqrt{3m}$ получаем
+\[
+\mathrm{Var}(\hat\theta_2)\approx \frac{\theta^2}{5n},
+\qquad
+\hat\theta_2 \approx N\!\left(\theta,\frac{\theta^2}{5n}\right).
+\]
+Отсюда асимптотические ДИ уровня $1-\alpha$:
+\[
+\theta\in\left[\hat\theta_1\Bigl(1-\frac{z_{1-\alpha/2}}{\sqrt{3n}}\Bigr),\ 
+\hat\theta_1\Bigl(1+\frac{z_{1-\alpha/2}}{\sqrt{3n}}\Bigr)\right],
+\]
+\[
+\theta\in\left[\hat\theta_2\Bigl(1-\frac{z_{1-\alpha/2}}{\sqrt{5n}}\Bigr),\ 
+\hat\theta_2\Bigl(1+\frac{z_{1-\alpha/2}}{\sqrt{5n}}\Bigr)\right].
+\]
+Их асимптотические длины пропорциональны стандартным ошибкам:
+\[
+|I_1|\sim \frac{2z_{1-\alpha/2}\theta}{\sqrt{3n}},\qquad
+|I_2|\sim \frac{2z_{1-\alpha/2}\theta}{\sqrt{5n}}.
+\]
+Так как $\frac{1}{\sqrt{5}}<\frac{1}{\sqrt{3}}$, то \emph{интервал на основе $\hat\theta_2$ асимптотически короче}
+(в $\sqrt{3/5}$ раз).
+
+\subsection*{II. $X_i\sim\mathrm{Exp}(\beta)$, асимптотические ДИ для $\beta$}
+
+Пусть $\beta>0$ --- параметр интенсивности. Даны оценки
+\[
+\hat\beta_1=\frac{1}{\overline{X}},\qquad
+\hat\beta_2=\sqrt{\frac{2}{\overline{X^2}}}.
+\]
+
+Так как $\mathbb{E}X=\frac{1}{\beta}$, $\mathrm{Var}(X)=\frac{1}{\beta^2}$, то по дельта-методу
+\[
+\hat\beta_1 \approx N\!\left(\beta,\frac{\beta^2}{n}\right).
+\]
+Далее, $\mathbb{E}X^2=\frac{2}{\beta^2}$, $\mathbb{E}X^4=\frac{24}{\beta^4}$, значит
+$\mathrm{Var}(X^2)=\frac{20}{\beta^4}$ и по дельта-методу для $h(m)=\sqrt{2/m}$:
+\[
+\hat\beta_2 \approx N\!\left(\beta,\frac{5\beta^2}{4n}\right).
+\]
+Отсюда асимптотические ДИ уровня $1-\alpha$:
+\[
+\beta\in\left[\hat\beta_1\Bigl(1-\frac{z_{1-\alpha/2}}{\sqrt{n}}\Bigr),\ 
+\hat\beta_1\Bigl(1+\frac{z_{1-\alpha/2}}{\sqrt{n}}\Bigr)\right],
+\]
+\[
+\beta\in\left[\hat\beta_2\Bigl(1-\frac{z_{1-\alpha/2}}{\sqrt{5n/4}}\Bigr),\ 
+\hat\beta_2\Bigl(1+\frac{z_{1-\alpha/2}}{\sqrt{5n/4}}\Bigr)\right].
+\]
+Сравнение длин:
+\[
+\frac{|J_2|}{|J_1|}\ \to\ \sqrt{\frac{5}{4}}>1,
+\]
+то есть \emph{интервал на основе $\hat\beta_1$ асимптотически короче}.
+
+\end{document}
