@@ -80,7 +80,7 @@ def task4(arr, k):
     r = max(arr)
 
     while l < r:
-        m = (l + r + 1 ) // 2
+        m = (l + r + 1) // 2
         count = 0
         for item in arr:
             count += item // m
@@ -102,11 +102,64 @@ def run_task4():
     print(task4(arr, k))
 
 
+def subsetsum(arr, s):
+    dp = [False] * (s + 1)
+    dp[0] = True
+
+    for i in arr:
+        for j in range(s, i - 1, -1):
+            dp[j] = dp[j] or dp[j - i]
+
+    return dp[s]
+
+
+def sss(arr, i, s):
+    if s < 0:
+        return False
+    if s == 0:
+        return True
+    if i >= len(arr) and s > 0:
+        return False
+
+    return sss(arr, i + 1, s) or sss(arr, i + 1, s - arr[i])
+
+
+def can_place(x, k, d):
+    cnt = 1
+    last = x[0]
+    for i in range(1, len(x)):
+        if x[i] - last >= d:
+            cnt += 1
+            last = x[i]
+            if cnt >= k:
+                return True
+    return False
+
+def max_min_distance(n, k, x):
+    low = 0
+    high = x[-1] - x[0] + 1
+
+    while high - low > 1:
+        mid = (low + high) // 2
+        if can_place(x, k, mid):
+            low = mid
+        else:
+            high = mid
+    return low
+
+def run_max_min_distance():
+    n, k = map(int, input().split())
+    x = list(map(int, input().split()))
+    print(max_min_distance(n, k, x))
+
+
 def main():
     # run_task1()
     # run_task2()
     # run_task3()
-    run_task4()
+    # run_task4()
+    run_max_min_distance()
+
 
 
 if __name__ == '__main__':
