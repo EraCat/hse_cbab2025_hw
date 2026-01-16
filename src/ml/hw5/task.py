@@ -335,7 +335,7 @@ class TorchModel(nn.Module):
         Учтите, что файлы решения находятся не в корне директории, поэтому необходимо использовать следующий путь:
         `__file__[:-7] + "model.pth"`, где "model.pth" - имя файла сохраненной модели `
         """
-        state = torch.load(__file__[:-7] + "model.pth", map_location=torch.device('cuda:0'))
+        state = torch.load(__file__[:-7] + "model.pth", map_location="cpu")
         self.load_state_dict(state)
         self.eval()
         return self
@@ -361,5 +361,5 @@ def calculate_loss(X: torch.Tensor, y: torch.Tensor, model: TorchModel):
 
     """
     logits = model(X)
-    y = y.long().view(-1)
+    y = y.long().reshape(-1)
     return torch.nn.functional.cross_entropy(logits, y)
