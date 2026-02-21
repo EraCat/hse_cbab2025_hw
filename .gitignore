@@ -1,3 +1,10 @@
 out
 auxil
 .idea
+**/task.zip
+**/__pycache__
+src/tvms/out_mc
+dont_commit
+src/ml/hw6/cat_136.zip
+src/ml/hw6/cat_136
+src/ml/hw5/datasets/cifar10
