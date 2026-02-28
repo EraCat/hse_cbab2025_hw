@@ -50,18 +50,19 @@ def task_2():
         adj[i] = [v - 1 for v in data[1:]]
 
     raw = list(map(int, input_data.readline().split()))
-    matchL = [-1] * m
+    matchingL = [-1] * m
     for i in range(m):
         x = raw[i]
-        matchL[i] = -1 if x == 0 else (x - 1)
+        matchingL[i] = -1 if x == 0 else (x - 1)
 
-    matchR = [-1] * n
+    matchingR = [-1] * n
     for i in range(m):
-        j = matchL[i]
+        j = matchingL[i]
         if j != -1:
-            matchR[j] = i
+            matchingR[j] = i
 
-
+    visL = [False] * m
+    visR = [False] * n
 
 
 
